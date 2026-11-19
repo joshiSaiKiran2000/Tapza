@@ -176,7 +176,7 @@ export const HomeScreen: React.FC<TabScreenProps<'Home'>> = ({ navigation }) => 
               style={[
                 styles.searchBar,
                 {
-                  backgroundColor: theme.colors.surfaceVariant,
+                  backgroundColor: '#FFFFFF',
                   borderColor: theme.colors.border,
                 },
               ]}
@@ -302,6 +302,12 @@ const styles = StyleSheet.create({
     borderRadius: 23,
     borderWidth: 1,
     paddingHorizontal: 14,
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
   },
   searchInput: {
     flex: 1,
