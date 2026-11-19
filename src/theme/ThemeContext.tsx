@@ -11,6 +11,9 @@ import { useColorScheme } from 'react-native';
 import type { AppTheme, ThemeColors, ThemeTypography } from './types';
 import { defaultLightTheme, defaultDarkTheme, typography } from './tokens';
 import { storageService, STORAGE_KEYS } from '../services/storageService';
+import { developerSettingsService } from '../services/developerSettings';
+import normalConfig from '../config/normalConfig.json';
+import diwaliConfig from '../config/diwaliConfig.json';
 
 export type FontScale = 'small' | 'normal' | 'large' | 'xl';
 
@@ -114,6 +117,24 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   }, [themeMode, systemColorScheme]);
 
   const isDark = effectiveMode === 'dark';
+
+  // Synchronize remote colors directly at the ThemeProvider root level
+  useEffect(() => {
+    const syncThemeColors = (activeId: 'normal' | 'diwali') => {
+      const cfg = activeId === 'diwali' ? diwaliConfig : normalConfig;
+      const colors = isDark && cfg.theme.darkColors ? cfg.theme.darkColors : cfg.theme.colors;
+      setRemoteColors(colors as any);
+    };
+
+    const initialActive = developerSettingsService.getSettings().activeConfigId;
+    syncThemeColors(initialActive);
+
+    const unsubscribe = developerSettingsService.subscribe((settings) => {
+      syncThemeColors(settings.activeConfigId);
+    });
+
+    return () => unsubscribe();
+  }, [isDark]);
 
   const toggleTheme = useCallback(() => {
     setThemeModeState((prev) => {

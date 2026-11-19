@@ -41,11 +41,14 @@ export const developerSettingsService = {
 
   async updateSettings(partial: Partial<DeveloperSettings>): Promise<DeveloperSettings> {
     currentDevSettings = { ...currentDevSettings, ...partial };
-    await storageService.setItem(STORAGE_KEYS.DEV_SETTINGS, currentDevSettings);
-    if (partial.activeConfigId) {
-      await storageService.setItem(STORAGE_KEYS.ACTIVE_CONFIG_ID, partial.activeConfigId);
-    }
+    // Synchronously notify listeners immediately for instant, flicker-free UI updates
     listeners.forEach((fn) => fn(currentDevSettings));
+
+    // Persist to storage in background
+    storageService.setItem(STORAGE_KEYS.DEV_SETTINGS, currentDevSettings);
+    if (partial.activeConfigId) {
+      storageService.setItem(STORAGE_KEYS.ACTIVE_CONFIG_ID, partial.activeConfigId);
+    }
     return currentDevSettings;
   },
 
