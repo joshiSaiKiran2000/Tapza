@@ -2,12 +2,21 @@ import React from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Star, MapPin, Clock, Calendar, ChevronRight } from 'lucide-react-native';
+import { User, Check } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { DoctorCarouselData, DoctorCarouselItem, BackgroundConfig } from '../../config/types';
 import { RootStackParamList } from '../../types/navigation';
 import { useTheme } from '../../theme';
-import { AppText, AppButton, AppBadge } from '../common';
+import { AppText } from '../common';
 import { SectionBackground } from './SectionBackground';
+
+// Soft gradient pairs for the doctor card header illustration
+const avatarGradientPairs: Array<[string, string]> = [
+  ['#E0F2FE', '#BAE6FD'], // Light Sky Blue
+  ['#EDE9FE', '#DDD6FE'], // Light Lavender
+  ['#DCFCE7', '#BBF7D0'], // Light Mint Green
+  ['#FFEDD5', '#FED7AA'], // Light Peach
+];
 
 interface DoctorCarouselSectionProps {
   id: string;
@@ -18,8 +27,7 @@ interface DoctorCarouselSectionProps {
 }
 
 export const DoctorCarouselSection: React.FC<DoctorCarouselSectionProps> = ({
-  title,
-  subtitle,
+  title = 'Our Doctors',
   background,
   data,
 }) => {
@@ -35,175 +43,178 @@ export const DoctorCarouselSection: React.FC<DoctorCarouselSectionProps> = ({
 
   return (
     <SectionBackground background={background} style={styles.sectionContainer}>
-      <View style={{ paddingHorizontal: theme.spacing.md, paddingTop: theme.spacing.sm }}>
-        {title ? (
-          <AppText variant="lg" weight="bold">
-            {title}
-          </AppText>
-        ) : null}
-        {subtitle ? (
-          <AppText variant="xs" color={theme.colors.textSecondary} style={{ marginTop: 2 }}>
-            {subtitle}
-          </AppText>
-        ) : null}
-      </View>
-
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingLeft: theme.spacing.md, paddingRight: 24, paddingVertical: theme.spacing.sm },
-        ]}
-      >
-        {data.doctors.map((doc) => {
-          return (
-            <TouchableOpacity
-              key={doc.id}
-              accessibilityRole="button"
-              accessibilityLabel={`Doctor ${doc.name}, ${doc.speciality}`}
-              activeOpacity={0.8}
-              onPress={() => handleDoctorPress(doc)}
-              style={[
-                styles.doctorCard,
-                {
-                  backgroundColor: theme.colors.card,
-                  borderColor: theme.colors.border,
-                  borderRadius: theme.borderRadius.xl,
-                  padding: theme.spacing.md,
-                  marginRight: theme.spacing.md,
-                },
-              ]}
-              hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
-            >
-              <View style={styles.cardTop}>
-                <View
-                  style={[
-                    styles.avatarPlaceholder,
-                    {
-                      backgroundColor: theme.colors.primaryLight,
-                    },
-                  ]}
-                >
-                  <AppText variant="lg" weight="bold" color={theme.colors.primary}>
-                    {doc.name.split(' ')[1]?.[0] || 'D'}
-                  </AppText>
-                </View>
-
-                <View style={{ flex: 1, marginLeft: 10 }}>
-                  <AppText variant="sm" weight="bold" numberOfLines={1}>
-                    {doc.name}
-                  </AppText>
-                  <AppText
-                    variant="xs"
-                    color={theme.colors.textSecondary}
-                    numberOfLines={1}
-                    style={{ marginTop: 1 }}
-                  >
-                    {doc.speciality}
-                  </AppText>
-
-                  <View style={styles.ratingRow}>
-                    <Star size={13} color="#EAB308" fill="#EAB308" />
-                    <AppText variant="xs" weight="semibold" style={{ marginLeft: 3 }}>
-                      {doc.rating}
-                    </AppText>
-                    <AppText variant="xs" color={theme.colors.textMuted} style={{ marginLeft: 2 }}>
-                      ({doc.reviewsCount})
-                    </AppText>
-                    <AppText variant="xs" color={theme.colors.textMuted} style={{ marginLeft: 6 }}>
-                      • {doc.experienceYears} yrs exp
-                    </AppText>
-                  </View>
-                </View>
-              </View>
-
-              <View style={[styles.divider, { backgroundColor: theme.colors.divider }]} />
-
-              <View style={styles.clinicRow}>
-                <MapPin size={14} color={theme.colors.textMuted} style={{ marginRight: 4 }} />
-                <AppText variant="xs" color={theme.colors.textSecondary} numberOfLines={1}>
-                  {doc.clinic}, {doc.area}
+            {/* Header with Title and "See all →" */}
+            <View style={styles.headerRow}>
+              <AppText variant="md" weight="bold" color={theme.colors.text}>
+                {title}
+              </AppText>
+              <TouchableOpacity
+                accessibilityRole="button"
+                accessibilityLabel="See all doctors"
+                onPress={() =>
+                  navigation.navigate('DoctorDetails', {
+                    doctorId: data.doctors[0]?.id || 'doc-1',
+                  })
+                }
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                style={styles.seeAllButton}
+              >
+                <AppText variant="xs" weight="bold" color={theme.colors.primary}>
+                  See all →
                 </AppText>
-              </View>
+              </TouchableOpacity>
+            </View>
 
-              {doc.nextAvailableSlot ? (
-                <View style={[styles.slotRow, { marginTop: 4 }]}>
-                  <Clock size={14} color={theme.colors.primary} style={{ marginRight: 4 }} />
-                  <AppText variant="xs" weight="medium" color={theme.colors.primary}>
-                    {doc.nextAvailableSlot}
-                  </AppText>
-                </View>
-              ) : null}
+            {/* Horizontal Doctor Cards Matching Design */}
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.scrollContent}
+            >
+                {
+                  data.doctors.map((doc, index) => {
+                    const grad = avatarGradientPairs[index % avatarGradientPairs.length];
 
-              <View style={[styles.bottomRow, { marginTop: theme.spacing.sm }]}>
-                <View>
-                  <AppText variant="xs" color={theme.colors.textMuted}>
-                    Fee
-                  </AppText>
-                  <AppText variant="md" weight="bold" color={theme.colors.primary}>
-                    ₹{doc.fee}
-                  </AppText>
-                </View>
+                    return (
+                      <TouchableOpacity
+                        key={doc.id}
+                        accessibilityRole="button"
+                        accessibilityLabel={`Doctor ${doc.name}, ${doc.speciality}, Fee ₹${doc.fee}`}
+                        activeOpacity={0.82}
+                        onPress={() => handleDoctorPress(doc)}
+                        style={[
+                          styles.doctorCard,
+                          {
+                            backgroundColor: theme.colors.card,
+                            borderColor: theme.colors.border,
+                          },
+                        ]}
+                        hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+                      >
+                            {/* Top Avatar Area with soft gradient */}
+                            <LinearGradient
+                              colors={grad}
+                              style={styles.avatarContainer}
+                              start={{ x: 0, y: 0 }}
+                              end={{ x: 1, y: 1 }}
+                            >
+                              <View style={styles.avatarCircle}>
+                                <User size={38} color="#0369A1" />
+                              </View>
+                            </LinearGradient>
 
-                <AppButton
-                  title="Book"
-                  size="sm"
-                  variant="primary"
-                  style={{ minWidth: 80, height: 40 }}
-                  onPress={() => handleDoctorPress(doc)}
-                />
-              </View>
-            </TouchableOpacity>
-          );
+                              {/* Doctor Details Body */}
+                              <View style={styles.cardBody}>
+                                <AppText
+                                  variant="sm"
+                                  weight="bold"
+                                  color={theme.colors.text}
+                                  numberOfLines={1}
+                                >
+                                  {doc.name}
+                                </AppText>
+
+                                <AppText
+                                  variant="xs"
+                                  color={theme.colors.textSecondary}
+                                  numberOfLines={1}
+                                  style={{ marginTop: 2 }}
+                                >
+                                  {doc.speciality}
+                                </AppText>
+
+                                  {/* Bottom Row: Fee & Available Pill */}
+                                  <View style={styles.feeRow}>
+                                    <AppText variant="sm" weight="bold" color={theme.colors.text}>
+                                      ₹{doc.fee}
+                                    </AppText>
+
+                                      <View style={styles.availableBadge}>
+                                        <AppText
+                                          variant="xs"
+                                          weight="semibold"
+                                          color="#047857"
+                                          style={{ fontSize: 10, lineHeight: 12 }}
+                                        >
+                                          Available
+                                        </AppText>
+                                      </View>
+                                    </View>
+                                  </View>
+                                </TouchableOpacity>
+                                );
         })}
-      </ScrollView>
+                              </ScrollView>
     </SectionBackground>
-  );
+                          );
 };
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginVertical: 4,
+                          const styles = StyleSheet.create({
+                            sectionContainer: {
+                          marginVertical: 10,
   },
-  scrollContent: {
-    flexDirection: 'row',
+                          headerRow: {
+                            flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          paddingHorizontal: 16,
+                          marginBottom: 12,
   },
-  doctorCard: {
-    width: 280,
-    borderWidth: 1,
+                          seeAllButton: {
+                            flexDirection: 'row',
+                          alignItems: 'center',
   },
-  cardTop: {
-    flexDirection: 'row',
-    alignItems: 'center',
+                          scrollContent: {
+                            flexDirection: 'row',
+                          paddingLeft: 16,
+                          paddingRight: 24,
+                          gap: 12,
   },
-  avatarPlaceholder: {
-    width: 48,
-    height: 48,
-    borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
+                          doctorCard: {
+                          width: 156,
+                          borderRadius: 18,
+                          borderWidth: 1,
+                          overflow: 'hidden',
+                          shadowColor: '#000',
+                          shadowOffset: {width: 0, height: 2 },
+                          shadowOpacity: 0.05,
+                          shadowRadius: 4,
+                          elevation: 2,
   },
-  ratingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 3,
+                          avatarContainer: {
+                            height: 100,
+                          alignItems: 'center',
+                          justifyContent: 'center',
   },
-  divider: {
-    height: 1,
-    marginVertical: 10,
+                          avatarCircle: {
+                            width: 60,
+                          height: 60,
+                          borderRadius: 30,
+                          backgroundColor: '#FFFFFF',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          shadowColor: '#000',
+                          shadowOffset: {width: 0, height: 2 },
+                          shadowOpacity: 0.08,
+                          shadowRadius: 3,
+                          elevation: 2,
   },
-  clinicRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+                          cardBody: {
+                            padding: 12,
+                          justifyContent: 'space-between',
   },
-  slotRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+                            feeRow: {
+                            flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          marginTop: 10,
   },
-  bottomRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+                          availableBadge: {
+                            backgroundColor: '#D1FAE5',
+                          paddingHorizontal: 8,
+                          paddingVertical: 3,
+                          borderRadius: 10,
+                          borderWidth: StyleSheet.hairlineWidth,
+                          borderColor: '#A7F3D0',
   },
 });

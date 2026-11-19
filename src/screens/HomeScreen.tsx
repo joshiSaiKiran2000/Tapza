@@ -5,13 +5,17 @@ import {
   ScrollView,
   RefreshControl,
   TouchableOpacity,
+  TextInput,
   Animated,
+  Platform,
+  StatusBar as RNStatusBar,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
-  MapPin,
-  Sliders,
-  Sparkles,
+  Zap,
+  ChevronDown,
+  Search,
+  User,
   AlertTriangle,
 } from 'lucide-react-native';
 import { useTheme } from '../theme';
@@ -28,6 +32,12 @@ import type { TabScreenProps } from '../types/navigation';
 
 export const HomeScreen: React.FC<TabScreenProps<'Home'>> = ({ navigation }) => {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
+  const topInset = Math.max(
+    insets.top,
+    Platform.OS === 'android' ? (RNStatusBar.currentHeight || 28) : 0
+  );
+
   const {
     config,
     loading,
@@ -40,108 +50,35 @@ export const HomeScreen: React.FC<TabScreenProps<'Home'>> = ({ navigation }) => 
   } = useRemoteConfig();
 
   const [devModalVisible, setDevModalVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const scrollY = React.useRef(new Animated.Value(0)).current;
 
-    // Header elevation shadow on scroll
-    const headerElevation = scrollY.interpolate({
-      inputRange: [0, 20],
-      outputRange: [0, 4],
-      extrapolate: 'clamp',
-    });
-
-    return(
-        < SafeAreaView
-      edges = { ['top', 'left', 'right']}
-      style = { [styles.safeArea, { backgroundColor: theme.colors.background }]}
-        >
-        {/* Top Header with Hyderabad Location & Dev Settings trigger */ }
-        < Animated.View
-        style = {
-        [
-        styles.topBar,
+  return (
+    <View
+      style={[
+        styles.safeArea,
         {
-          backgroundColor: theme.colors.surface,
-          borderBottomColor: theme.colors.border,
-          elevation: headerElevation,
+          backgroundColor: theme.colors.background,
+          paddingTop: topInset,
         },
-        ]}
-        >
-        <View style={styles.topBarLeft}>
-          <View style={styles.locationRow}>
-            <MapPin size={16} color={theme.colors.primary} />
-            <AppText variant="sm" weight="bold" style={{ marginLeft: 4 }} numberOfLines={1}>
-              Banjara Hills, Hyderabad
-            </AppText>
-          </View>
-          <AppText variant="xs" color={theme.colors.textMuted} numberOfLines={1} style={{ marginTop: 1 }}>
-            Care Hospitals & 24 Clinics nearby
+      ]}
+    >
+      {/* Offline Cache Notice if applicable */}
+      {isFromCache && (
+        <View style={[styles.offlineBanner, { backgroundColor: theme.colors.warningLight }]}>
+          <AlertTriangle size={14} color={theme.colors.warning} style={{ marginRight: 6 }} />
+          <AppText variant="xs" weight="medium" color={theme.colors.text} style={{ flex: 1 }}>
+            Showing cached content. Offline-ready healthcare.
           </AppText>
-        </View>
-
-        <View style={styles.topBarRight}>
-          {/* Active Config Indicator Pill */}
-          <TouchableOpacity
-            accessibilityRole="button"
-            accessibilityLabel="Switch remote configuration theme"
-            onPress={() => setDevModalVisible(true)}
-            style={[
-              styles.themeBadgePill,
-              {
-                backgroundColor:
-                  activeConfigId === 'diwali'
-                    ? '#FFEDD5'
-                    : theme.colors.primaryLight,
-                borderColor:
-                  activeConfigId === 'diwali'
-                    ? '#C2410C'
-                    : theme.colors.primary,
-              },
-            ]}
-            hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
-          >
-            {activeConfigId === 'diwali' ? (
-              <Sparkles size={12} color="#C2410C" style={{ marginRight: 3 }} />
-            ) : null}
-            <AppText
-              variant="xs"
-              weight="bold"
-              color={activeConfigId === 'diwali' ? '#C2410C' : theme.colors.primary}
-              style={{ fontSize: 11 }}
-            >
-              {activeConfigId === 'diwali' ? '🪔 Diwali' : 'Teal'}
+          <TouchableOpacity onPress={refresh} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
+            <AppText variant="xs" weight="bold" color={theme.colors.primary}>
+              Retry
             </AppText>
           </TouchableOpacity>
+        </View>
+      )}
 
-  {/* Developer / Admin Controls Modal Trigger */ }
-  < TouchableOpacity
-accessibilityRole = "button"
-accessibilityLabel = "Open Developer Controls"
-onPress = {() => setDevModalVisible(true)}
-style = { [styles.iconButton, { backgroundColor: theme.colors.surfaceVariant }]}
-hitSlop = {{ top: 8, bottom: 8, left: 8, right: 8 }}
-          >
-  <Sliders size={18} color={theme.colors.text} />
-          </TouchableOpacity >
-        </View >
-      </Animated.View >
-
-          {/* Offline Cache Notice if applicable */}
-          {isFromCache && (
-            <View style={[styles.offlineBanner, { backgroundColor: theme.colors.warningLight }]}>
-              <AlertTriangle size={14} color={theme.colors.warning} style={{ marginRight: 6 }} />
-              <AppText variant="xs" weight="medium" color={theme.colors.text} style={{ flex: 1 }}>
-                Showing cached content. Offline-ready healthcare.
-              </AppText>
-        <TouchableOpacity onPress={refresh} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
-          <AppText variant="xs" weight="bold" color={theme.colors.primary}>
-            Retry
-          </AppText>
-        </TouchableOpacity>
-    </View>
-  )
-}
-
-      {/* Main Content Area */}
+      {/* Main Scrollable Content */}
       {loading && !config ? (
         <HomeScreenSkeleton />
       ) : error && !config ? (
@@ -168,7 +105,76 @@ hitSlop = {{ top: 8, bottom: 8, left: 8, right: 8 }}
             />
           }
         >
-          {/* Dynamic Section Renderer with Hero Parallax scrollY passed */}
+          {/* 1. TOP HEADER (⚡ 15 minutes + Location + Down Arrow + Cashback Pill + Profile Icon) */}
+          <View style={styles.topBrandBar}>
+            {/* Left: ⚡ 15 minutes + Location + Down arrow */}
+            <View style={styles.locationContainer}>
+              <View style={styles.deliveryTimeRow}>
+                <Zap size={19} color="#000000" fill="#000000" style={{ marginRight: 6 }} />
+                <AppText variant="lg" weight="bold" color={theme.colors.text} style={styles.deliveryTimeText}>
+                  15 minutes
+                </AppText>
+              </View>
+
+              <TouchableOpacity
+                activeOpacity={0.7}
+                style={styles.addressRow}
+                accessibilityRole="button"
+                accessibilityLabel="Select location"
+                onPress={() => setDevModalVisible(true)}
+              >
+                <AppText
+                  variant="xs"
+                  weight="medium"
+                  color={theme.colors.textSecondary}
+                  numberOfLines={1}
+                  style={styles.addressText}
+                >
+                  Other - 543, 18-3-59/1, Banjara Hills, Hyd...
+                </AppText>
+                <ChevronDown size={14} color={theme.colors.text} style={{ marginLeft: 3 }} />
+              </TouchableOpacity>
+            </View>
+
+            {/* Right: Profile Icon */}
+            <View style={styles.brandRight}>
+              <TouchableOpacity
+                accessibilityRole="button"
+                accessibilityLabel="Profile"
+                onPress={() => navigation.navigate('MainTabs', { screen: 'Profile' })}
+                onLongPress={() => setDevModalVisible(true)}
+                style={[styles.profileCircleButton, { borderColor: theme.colors.text }]}
+                hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+              >
+                <User size={19} color={theme.colors.text} strokeWidth={2.2} />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* 2. SEARCH BAR */}
+          <View style={styles.searchContainer}>
+            <View
+              style={[
+                styles.searchBar,
+                {
+                  backgroundColor: theme.colors.surfaceVariant,
+                  borderColor: theme.colors.border,
+                },
+              ]}
+            >
+              <Search size={18} color={theme.colors.textMuted} style={{ marginRight: 8 }} />
+              <TextInput
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                placeholder="Search doctors, tests, or services..."
+                placeholderTextColor={theme.colors.textMuted}
+                style={[styles.searchInput, { color: theme.colors.text }]}
+                onSubmitEditing={() => navigation.navigate('DoctorDetails', { doctorId: 'doc-1' })}
+              />
+            </View>
+          </View>
+
+          {/* 4. DYNAMIC HOME SECTIONS RENDERED ACCORDING TO REMOTE CONFIG */}
           {config?.sections.map((section) => (
             <DynamicSectionRenderer
               key={section.id}
@@ -187,21 +193,21 @@ hitSlop = {{ top: 8, bottom: 8, left: 8, right: 8 }}
             />
           )}
 
-          <View style={{ height: 24 }} />
-        </ Animated.ScrollView>
+          <View style={{ height: 28 }} />
+        </Animated.ScrollView>
       )}
 
-      {/* Developer Controls Modal */ }
-  <DeveloperSettingsModal
-    visible={devModalVisible}
-    onClose={() => setDevModalVisible(false)}
-    onConfigSwitched={(targetId) => {
-      switchTheme(targetId);
-      setDevModalVisible(false);
-    }}
-    activeConfigId={activeConfigId}
-  />
-    </SafeAreaView >
+      {/* Developer Controls Modal */}
+      <DeveloperSettingsModal
+        visible={devModalVisible}
+        onClose={() => setDevModalVisible(false)}
+        onConfigSwitched={(targetId) => {
+          switchTheme(targetId);
+          setDevModalVisible(false);
+        }}
+        activeConfigId={activeConfigId}
+      />
+    </View >
   );
 };
 
@@ -209,49 +215,76 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
   },
-    topBar: {
-      flexDirection: 'row',
+  scrollContent: {
+    paddingBottom: 24,
+  },
+  topBrandBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 6,
+  },
+  locationContainer: {
+    flex: 1,
+    paddingRight: 8,
+  },
+  deliveryTimeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  deliveryTimeText: {
+    fontSize: 19,
+    fontWeight: '800',
+    lineHeight: 23,
+    letterSpacing: -0.3,
+  },
+  addressRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 2,
+  },
+  addressText: {
+    fontSize: 12,
+    lineHeight: 16,
+    maxWidth: 220,
+  },
+  brandRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+    profileCircleButton: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      borderWidth: 1.5,
       alignItems: 'center',
-      justifyContent: 'space-between',
+      justifyContent: 'center',
+      backgroundColor: '#FFFFFF',
+    },
+    searchContainer: {
       paddingHorizontal: 16,
       paddingVertical: 10,
-      borderBottomWidth: 1,
     },
-      topBarLeft: {
-        flex: 1,
-        paddingRight: 10,
-      },
-        locationRow: {
-          flexDirection: 'row',
-          alignItems: 'center',
-        },
-          topBarRight: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 8,
-          },
-            themeBadgePill: {
-              flexDirection: 'row',
-              alignItems: 'center',
-              paddingHorizontal: 9,
-              paddingVertical: 5,
-              borderRadius: 14,
-              borderWidth: 1,
-            },
-              iconButton: {
-                width: 38,
-                height: 38,
-                borderRadius: 19,
-                alignItems: 'center',
-                justifyContent: 'center',
-              },
-                offlineBanner: {
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  paddingHorizontal: 16,
-                  paddingVertical: 6,
-                },
-                  scrollContent: {
-                    paddingBottom: 24,
-                  },
-                });
+    searchBar: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      height: 46,
+      borderRadius: 23,
+      borderWidth: 1,
+      paddingHorizontal: 14,
+    },
+    searchInput: {
+      flex: 1,
+      fontSize: 14,
+      height: '100%',
+    },
+    offlineBanner: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 16,
+      paddingVertical: 6,
+    },
+  });

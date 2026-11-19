@@ -2,7 +2,18 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Calendar, Pill, Clock, PhoneCall, Sparkles, LucideIcon } from 'lucide-react-native';
+import {
+  Calendar,
+  FileText,
+  Bell,
+  Users,
+  Pill,
+  Clock,
+  PhoneCall,
+  Sparkles,
+  ChevronRight,
+  LucideIcon,
+} from 'lucide-react-native';
 import { QuickActionsData, BackgroundConfig } from '../../config/types';
 import { RootStackParamList } from '../../types/navigation';
 import { useTheme } from '../../theme';
@@ -11,11 +22,22 @@ import { SectionBackground } from './SectionBackground';
 
 const iconMap: Record<string, LucideIcon> = {
   Calendar,
+  FileText,
+  Bell,
+  Users,
   Pill,
   Clock,
   PhoneCall,
   Sparkles,
 };
+
+// Pastel colors for the 4 action circles matching the screenshot
+const actionPalette = [
+  { bg: '#CCFBF1', icon: '#0F766E' }, // Mint / Cyan
+  { bg: '#DBEAFE', icon: '#1D4ED8' }, // Sky Blue
+  { bg: '#FEF3C7', icon: '#D97706' }, // Warm Amber
+  { bg: '#F3E8FF', icon: '#7E22CE' }, // Purple
+];
 
 interface QuickActionsSectionProps {
   id: string;
@@ -26,8 +48,7 @@ interface QuickActionsSectionProps {
 }
 
 export const QuickActionsSection: React.FC<QuickActionsSectionProps> = ({
-  title,
-  subtitle,
+  title = 'Quick Actions',
   background,
   data,
 }) => {
@@ -46,143 +67,108 @@ export const QuickActionsSection: React.FC<QuickActionsSectionProps> = ({
     }
   };
 
+  const displayActions = data.actions.slice(0, 4);
+
   return (
     <SectionBackground background={background} style={styles.sectionContainer}>
-      <View style={{ paddingHorizontal: theme.spacing.md, paddingTop: theme.spacing.xs }}>
-        {title ? (
-          <AppText variant="lg" weight="bold">
-            {title}
-          </AppText>
-        ) : null}
-        {subtitle ? (
-          <AppText variant="xs" color={theme.colors.textSecondary} style={{ marginTop: 2 }}>
-            {subtitle}
-          </AppText>
-        ) : null}
-      </View>
-
-      <View style={[styles.grid, { padding: theme.spacing.md }]}>
-        {data.actions.map((act) => {
-          const IconComponent = iconMap[act.icon] || Sparkles;
-
-          return (
-            <TouchableOpacity
-              key={act.id}
-              accessibilityRole="button"
-              accessibilityLabel={`${act.label}: ${act.sublabel || ''}`}
-              activeOpacity={0.7}
-              onPress={() => handleActionPress(act.route)}
-              style={[
-                styles.actionCard,
-                {
-                  backgroundColor: theme.colors.surface,
-                  borderColor: theme.colors.border,
-                  borderRadius: theme.borderRadius.lg,
-                  padding: theme.spacing.md,
-                },
-              ]}
-              hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
-            >
-                {/* Card Top Row with Icon on left and Badge on right */ }
-                < View style={styles.cardHeaderRow}>
-              <View
-                style={[
-                  styles.iconBox,
-                  {
-                    backgroundColor: theme.colors.primaryLight,
-                  },
-                ]}
-              >
-                <IconComponent size={22} color={theme.colors.primary} />
-              </View>
-
-                {act.badge ? (
-                  <View
-                    style={[
-                      styles.badge,
-                      {
-                        backgroundColor:
-                          act.badge === 'SOS'
-                            ? theme.colors.error
-                            : theme.colors.secondaryLight,
-                      },
-                    ]}
-                  >
-                    <AppText
-                      variant="xs"
-                      weight="bold"
-                      numberOfLines={1}
-                      color={act.badge === 'SOS' ? theme.colors.white : theme.colors.secondary}
-                      style={{ fontSize: 10, lineHeight: 12 }}
-                    >
-                      {act.badge}
-                    </AppText>
-                  </View>
-                ) : null}
-              </View>
-
-              <AppText
-                variant="sm"
-                weight="bold"
-                numberOfLines={1}
-                style={{ marginTop: 10 }}
-              >
-                {act.label}
+            {/* Header with Title on Left and 'See all →' on Right */}
+            <View style={styles.headerRow}>
+              <AppText variant="md" weight="bold" color={theme.colors.text}>
+                {title}
               </AppText>
-
-              {act.sublabel ? (
-                <AppText
-                  variant="xs"
-                  color={theme.colors.textMuted}
-                  numberOfLines={1}
-                  style={{ marginTop: 2 }}
-                >
-                  {act.sublabel}
+              <TouchableOpacity
+                accessibilityRole="button"
+                accessibilityLabel="See all quick actions"
+                onPress={() => navigation.navigate('MainTabs', { screen: 'Bookings' })}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                style={styles.seeAllButton}
+              >
+                <AppText variant="xs" weight="bold" color={theme.colors.primary}>
+                  See all →
                 </AppText>
-              ) : null}
-            </TouchableOpacity>
-          );
-        })}
-      </View>
+              </TouchableOpacity>
+            </View>
+
+                {/* 4 Action Circles in a Row */ }
+                <View style={styles.actionsRow}>
+                  {displayActions.map((act, index) => {
+                    const colorPair = actionPalette[index % actionPalette.length];
+                    const IconComponent = iconMap[act.icon] || Calendar;
+
+                    return (
+                      <TouchableOpacity
+                        key={act.id}
+                        accessibilityRole="button"
+                        accessibilityLabel={act.label}
+                        activeOpacity={0.75}
+                        onPress={() => handleActionPress(act.route)}
+                        style={styles.actionItem}
+                        hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+                      >
+                            <View style={[styles.circleIcon, { backgroundColor: colorPair.bg }]}>
+                              <IconComponent size={22} color={colorPair.icon} />
+                            </View>
+
+                          <AppText
+                            variant="xs"
+                            weight="medium"
+                            color={theme.colors.textSecondary}
+                            align="center"
+                            style={styles.actionLabel}
+                            numberOfLines={2}
+                          >
+                            {act.label}
+                          </AppText>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
     </SectionBackground>
-  );
+            );
 };
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginVertical: 4,
+            const styles = StyleSheet.create({
+              sectionContainer: {
+            marginVertical: 10,
+            paddingHorizontal: 16,
   },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    rowGap: 12,
+              headerRow: {
+              flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: 12,
   },
-  actionCard: {
-    width: '48%',
-    borderWidth: 1,
-    minHeight: 96,
-    justifyContent: 'space-between',
+              seeAllButton: {
+              flexDirection: 'row',
+            alignItems: 'center',
   },
-  cardHeaderRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
+            actionsRow: {
+              flexDirection: 'row',
+            alignItems: 'flex-start',
+            justifyContent: 'space-around',
   },
-  iconBox: {
-    width: 42,
-    height: 42,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
+            actionItem: {
+              alignItems: 'center',
+            justifyContent: 'flex-start',
+            flex: 1,
+            minHeight: 88,
   },
-  badge: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 8,
-    maxWidth: 75,
-    alignItems: 'center',
-    justifyContent: 'center',
+            circleIcon: {
+              width: 52,
+            height: 52,
+            borderRadius: 26,
+            alignItems: 'center',
+            justifyContent: 'center',
+            shadowColor: '#000',
+            shadowOffset: {width: 0, height: 1 },
+            shadowOpacity: 0.05,
+            shadowRadius: 2,
+            elevation: 1,
+  },
+            actionLabel: {
+              marginTop: 8,
+            fontSize: 11,
+            lineHeight: 14,
+            maxWidth: 72,
   },
 });

@@ -10,7 +10,7 @@ export interface DeveloperSettings {
 }
 
 export const defaultDevSettings: DeveloperSettings = {
-  activeConfigId: 'normal',
+  activeConfigId: 'diwali',
   simulateLatency: true,
   latencyMs: 600,
   simulateApiFailure: false,

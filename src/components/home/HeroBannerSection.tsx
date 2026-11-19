@@ -1,13 +1,15 @@
 import React from 'react';
-import { View, StyleSheet, Animated } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Sparkles, ArrowRight, ShieldCheck } from 'lucide-react-native';
+import { ArrowRight } from 'lucide-react-native';
 import { HeroBannerData, BackgroundConfig } from '../../config/types';
 import { RootStackParamList } from '../../types/navigation';
 import { useTheme } from '../../theme';
-import { AppText, AppButton, AppBadge } from '../common';
+import { AppText } from '../common';
 import { SectionBackground } from './SectionBackground';
+import { DiyaIllustration } from './DiyaIllustration';
+import { MedicalIllustration } from './MedicalIllustration';
 
 interface HeroBannerSectionProps {
   id: string;
@@ -32,145 +34,144 @@ export const HeroBannerSection: React.FC<HeroBannerSectionProps> = ({
     });
   };
 
+  const isDiwali = data.headline.toLowerCase().includes('diwali') || background.gradientColors?.[0]?.includes('#');
   const isGradientOrDark = background.type === 'gradient';
-  const textColor = isGradientOrDark ? theme.colors.white : theme.colors.text;
-  const subtitleColor = isGradientOrDark
-    ? 'rgba(255, 255, 255, 0.85)'
-    : theme.colors.textSecondary;
 
   // Parallax translation effect based on scroll position
   const translateY = scrollY
     ? scrollY.interpolate({
-      inputRange: [-100, 0, 100],
-      outputRange: [-20, 0, 15],
+        inputRange: [-100, 0, 100],
+    outputRange: [-15, 0, 12],
       extrapolate: 'clamp',
-    })
+      })
     : 0;
 
-  return (
-    <SectionBackground background={background} style={styles.backgroundWrapper}>
-      <Animated.View
-        style={[
-          styles.content,
-          {
-            paddingHorizontal: 18,
-            paddingVertical: 18,
-            transform: [{ translateY }],
-          },
-        ]}
-      >
-        {data.badgeText ? (
-          <View style={styles.badgeRow}>
-            <View
-              style={[
-                styles.badgeContainer,
-                {
-                  backgroundColor: isGradientOrDark
-                    ? 'rgba(255, 255, 255, 0.2)'
-                    : theme.colors.primaryLight,
-                  borderColor: isGradientOrDark
-                    ? 'rgba(255, 255, 255, 0.4)'
-                    : theme.colors.border,
-                },
-              ]}
-            >
-              <Sparkles size={14} color={isGradientOrDark ? '#FEF08A' : theme.colors.primary} />
-              <AppText
-                variant="xs"
-                weight="bold"
-                color={isGradientOrDark ? theme.colors.white : theme.colors.primary}
-                style={{ marginLeft: 6 }}
+return (
+    <View style={styles.outerContainer}>
+            <SectionBackground background={background} style={styles.backgroundWrapper}>
+              <Animated.View
+                style={[
+                  styles.contentRow,
+                  {
+                    transform: [{ translateY }],
+                  },
+                ]}
               >
-                {data.badgeText}
-              </AppText>
-            </View>
+                {/* Left Text & CTA */}
+                <View style={styles.leftColumn}>
+                  <AppText
+                    variant="lg"
+                    weight="bold"
+                    color="#FFFFFF"
+                    style={styles.headline}
+                  >
+                      {data.headline}
+                    </AppText>
+
+                    <View style={{ marginTop: 6 }}>
+                      <AppText variant="sm" weight="semibold" color="#FDE68A">
+                        {data.subheadline.includes('OFF')
+                          ? data.subheadline
+                          : 'Up to 20% OFF on Consultations'}
+                      </AppText>
+                    </View>
+
+                      {/* Pill "Book Now →" Button */}
+            <TouchableOpacity
+                      accessibilityRole="button"
+                      accessibilityLabel={data.ctaText || 'Book Now'}
+                      activeOpacity={0.85}
+                      onPress={handleCtaPress}
+                      style={styles.bookNowButton}
+                      hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+                    >
+                    <AppText variant="xs" weight="bold" color="#18181B">
+                      {data.ctaText || 'Book Now'}
+                    </AppText>
+                    <ArrowRight size={14} color="#18181B" style={{ marginLeft: 4 }} />
+                  </TouchableOpacity>
           </View>
-        ) : null}
 
-        <AppText
-          variant="xl"
-          weight="bold"
-          color={textColor}
-          style={[styles.headline, { marginTop: theme.spacing.sm }]}
-        >
-          {data.headline}
-        </AppText>
-
-        {data.headlineHindi ? (
-          <AppText
-            variant="sm"
-            weight="medium"
-            color={subtitleColor}
-            style={{ marginTop: 2, fontStyle: 'italic' }}
-          >
-            {data.headlineHindi}
-          </AppText>
-        ) : null}
-
-        <AppText
-          variant="sm"
-          color={subtitleColor}
-          style={[styles.subheadline, { marginTop: theme.spacing.xs }]}
-        >
-          {data.subheadline}
-        </AppText>
-
-        {data.accentNote ? (
-          <View style={[styles.accentRow, { marginTop: theme.spacing.sm }]}>
-            <ShieldCheck size={16} color={isGradientOrDark ? '#FEF08A' : theme.colors.success} />
-            <AppText
-              variant="xs"
-              weight="semibold"
-              color={isGradientOrDark ? '#FEF08A' : theme.colors.success}
-              style={{ marginLeft: 6 }}
-            >
-              {data.accentNote}
-            </AppText>
+          {/* Right Visual (Glowing Diya or Medical Shield) */}
+          <View style={styles.rightColumn}>
+            {isDiwali ? <DiyaIllustration size={110} /> : <MedicalIllustration size={105} />}
           </View>
-        ) : null}
+        </Animated.View>
+      </SectionBackground>
 
-        <AppButton
-          title={data.ctaText}
-          variant={isGradientOrDark ? 'secondary' : 'primary'}
-          size="md"
-          icon={<ArrowRight size={18} color={theme.colors.white} />}
-          iconPosition="right"
-          style={{ marginTop: theme.spacing.md }}
-          onPress={handleCtaPress}
-        />
-      </Animated.View>
-    </SectionBackground >
+      {/* Pagination Dots (3 dots) */ }
+<View style={styles.dotsRow}>
+  <View style={[styles.dot, styles.activeDot, { backgroundColor: theme.colors.primary }]} />
+  <View style={[styles.dot, { backgroundColor: theme.colors.border }]} />
+  <View style={[styles.dot, { backgroundColor: theme.colors.border }]} />
+</View>
+    </View >
   );
 };
 
 const styles = StyleSheet.create({
+  outerContainer: {
+    marginVertical: 4,
+  },
   backgroundWrapper: {
-    borderRadius: 20,
+    borderRadius: 22,
     marginHorizontal: 16,
-    marginVertical: 8,
+    overflow: 'hidden',
   },
-  content: {
-    paddingVertical: 20,
-  },
-  badgeRow: {
-    flexDirection: 'row',
-  },
-  badgeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 20,
-    borderWidth: 1,
-  },
-  headline: {
-    letterSpacing: -0.3,
-  },
-  subheadline: {
-    lineHeight: 20,
-  },
-  accentRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-});
+    contentRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: 20,
+      paddingVertical: 18,
+      minHeight: 165,
+    },
+      leftColumn: {
+        flex: 1.3,
+        paddingRight: 6,
+        justifyContent: 'center',
+      },
+      rightColumn: {
+        flex: 0.9,
+        alignItems: 'center',
+        justifyContent: 'center',
+      },
+      headline: {
+        fontSize: 18,
+        lineHeight: 23,
+        letterSpacing: -0.2,
+      },
+        bookNowButton: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          alignSelf: 'flex-start',
+          backgroundColor: '#FFFFFF',
+          paddingHorizontal: 16,
+          paddingVertical: 8,
+          borderRadius: 20,
+          marginTop: 14,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.15,
+          shadowRadius: 4,
+          elevation: 3,
+          minHeight: 36,
+        },
+          dotsRow: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop: 10,
+            marginBottom: 4,
+            gap: 6,
+          },
+          dot: {
+            width: 6,
+            height: 6,
+            borderRadius: 3,
+          },
+          activeDot: {
+            width: 16,
+            borderRadius: 4,
+          },
+        });

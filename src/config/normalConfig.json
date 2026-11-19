@@ -46,10 +46,34 @@
     }
   },
   "navigationTabs": [
-    { "id": "home", "name": "Home", "title": "Home", "icon": "Home", "enabled": true },
-    { "id": "bookings", "name": "Bookings", "title": "Bookings", "icon": "Calendar", "enabled": true },
-    { "id": "prescriptions", "name": "Prescriptions", "title": "Prescriptions", "icon": "Pill", "enabled": true },
-    { "id": "profile", "name": "Profile", "title": "Profile", "icon": "User", "enabled": true }
+    {
+      "id": "home",
+      "name": "Home",
+      "title": "Home",
+      "icon": "Home",
+      "enabled": true
+    },
+    {
+      "id": "bookings",
+      "name": "Bookings",
+      "title": "Bookings",
+      "icon": "Calendar",
+      "enabled": true
+    },
+    {
+      "id": "prescriptions",
+      "name": "Prescriptions",
+      "title": "Prescriptions",
+      "icon": "Pill",
+      "enabled": true
+    },
+    {
+      "id": "profile",
+      "name": "Profile",
+      "title": "Profile",
+      "icon": "User",
+      "enabled": true
+    }
   ],
   "sections": [
     {
@@ -58,146 +82,151 @@
       "title": "Welcome",
       "background": {
         "type": "gradient",
-        "gradientColors": ["#0D7A73", "#115E59"]
+        "gradientColors": [
+          "#0D7A73",
+          "#115E59"
+        ]
       },
       "data": {
         "badgeText": "Hyderabad's Trusted Care",
         "headline": "Expert Doctors at Your Neighborhood Clinics",
         "headlineHindi": "विश्वसनीय डॉक्टरों से परामर्श करें",
-        "subheadline": "Instant booking with verified doctors across Banjara Hills, Kondapur & Gachibowli.",
-        "ctaText": "Find Doctor & Book Slot",
+        "subheadline": "Up to 20% OFF on Consultations",
+        "ctaText": "Book Now",
         "ctaRoute": "DoctorDetails",
-        "ctaParams": { "doctorId": "doc-1", "doctorName": "Dr. Ramesh Reddy" },
-        "accentNote": "★ 4.9 Average Patient Rating"
+        "ctaParams": {
+          "doctorId": "doc-1",
+          "doctorName": "Dr. Rakesh Kumar"
+        }
+      }
+    },
+    {
+      "id": "sec-categories",
+      "type": "category_chips",
+      "title": "Services",
+      "background": {
+        "type": "solid",
+        "color": "transparent"
+      },
+      "data": {
+        "categories": [
+          {
+            "id": "cat-consult",
+            "label": "Consult",
+            "icon": "Stethoscope"
+          },
+          {
+            "id": "cat-lab",
+            "label": "Lab Tests",
+            "icon": "FlaskConical"
+          },
+          {
+            "id": "cat-pharmacy",
+            "label": "Pharmacy",
+            "icon": "ShieldPlus"
+          },
+          {
+            "id": "cat-vaccines",
+            "label": "Vaccines",
+            "icon": "Bandage"
+          }
+        ]
       }
     },
     {
       "id": "sec-quick-actions",
       "type": "quick_actions",
       "title": "Quick Actions",
-      "subtitle": "Essential healthcare shortcuts",
       "background": {
         "type": "solid",
-        "color": "#F8FAFC"
+        "color": "transparent"
       },
       "data": {
         "actions": [
           {
             "id": "qa-1",
-            "label": "Book Doctor",
-            "sublabel": "In-clinic visit",
+            "label": "Book Appointment",
             "icon": "Calendar",
-            "route": "DoctorDetails",
-            "badge": "Instant"
+            "route": "DoctorDetails"
           },
           {
             "id": "qa-2",
-            "label": "Medicine Tracker",
-            "sublabel": "Daily doses",
-            "icon": "Pill",
-            "route": "Prescriptions",
-            "badge": "3 Today"
+            "label": "View Prescriptions",
+            "icon": "FileText",
+            "route": "Prescriptions"
           },
           {
             "id": "qa-3",
-            "label": "My Bookings",
-            "sublabel": "Appointments",
-            "icon": "Clock",
-            "route": "Bookings"
+            "label": "Set Reminders",
+            "icon": "Bell",
+            "route": "Prescriptions"
           },
           {
             "id": "qa-4",
-            "label": "Emergency",
-            "sublabel": "24x7 Helpline",
-            "icon": "PhoneCall",
-            "route": "DoctorDetails",
-            "badge": "24/7"
+            "label": "Add Family",
+            "icon": "Users",
+            "route": "DoctorDetails"
           }
-        ]
-      }
-    },
-    {
-      "id": "sec-categories",
-      "type": "category_chips",
-      "title": "Top Specialities",
-      "subtitle": "Select a department to view specialists",
-      "background": {
-        "type": "solid",
-        "color": "#FFFFFF"
-      },
-      "data": {
-        "categories": [
-          { "id": "cat-all", "label": "All Specialities", "hindiLabel": "सभी", "icon": "Sparkles", "isSpecial": true },
-          { "id": "cat-cardio", "label": "Cardiology", "hindiLabel": "हृदय रोग", "icon": "Heart", "specialityQuery": "Cardiologist" },
-          { "id": "cat-pedia", "label": "Pediatrics", "hindiLabel": "बाल रोग", "icon": "Baby", "specialityQuery": "Pediatrician" },
-          { "id": "cat-physician", "label": "General Physician", "hindiLabel": "सामान्य चिकित्सक", "icon": "Stethoscope", "specialityQuery": "Physician" },
-          { "id": "cat-derma", "label": "Dermatology", "hindiLabel": "त्वचा विशेषज्ञ", "icon": "Smile", "specialityQuery": "Dermatologist" },
-          { "id": "cat-ortho", "label": "Orthopedics", "hindiLabel": "हड्डी रोग", "icon": "Activity", "specialityQuery": "Orthopedic" }
         ]
       }
     },
     {
       "id": "sec-doctors",
       "type": "doctor_carousel",
-      "title": "Verified Hyderabad Doctors",
-      "subtitle": "Available for in-person consultation today",
+      "title": "Our Doctors",
       "background": {
-        "type": "gradient",
-        "gradientColors": ["#F0FDFA", "#F8FAFC"]
+        "type": "solid",
+        "color": "transparent"
       },
       "data": {
         "doctors": [
           {
-            "id": "doc-1",
-            "name": "Dr. Ramesh Reddy",
-            "speciality": "Senior Cardiologist (DM AIIMS)",
-            "experienceYears": 16,
-            "rating": 4.9,
-            "reviewsCount": 348,
-            "fee": 800,
-            "clinic": "Care Hospitals",
-            "area": "Banjara Hills, Hyderabad",
-            "availableToday": true,
-            "nextAvailableSlot": "10:30 AM Tomorrow"
-          },
-          {
             "id": "doc-2",
             "name": "Dr. Priya Sharma",
-            "speciality": "Consultant Pediatrician (MD, DCH)",
+            "speciality": "General Physician",
             "experienceYears": 12,
             "rating": 4.8,
-            "reviewsCount": 215,
-            "fee": 650,
-            "clinic": "Rainbow Children’s Clinic",
-            "area": "Kondapur, Hyderabad",
-            "availableToday": true,
-            "nextAvailableSlot": "04:15 PM Today"
+            "reviewsCount": 218,
+            "fee": 500,
+            "clinic": "Rainbow Clinic",
+            "area": "Kondapur",
+            "availableToday": true
+          },
+          {
+            "id": "doc-1",
+            "name": "Dr. Rakesh Kumar",
+            "speciality": "Cardiologist",
+            "experienceYears": 16,
+            "rating": 4.9,
+            "reviewsCount": 352,
+            "fee": 800,
+            "clinic": "Care Hospitals",
+            "area": "Banjara Hills",
+            "availableToday": true
           },
           {
             "id": "doc-3",
-            "name": "Dr. Ananya Sen",
-            "speciality": "Consultant Dermatologist (MD)",
+            "name": "Dr. Sneha Patel",
+            "speciality": "Pediatrician",
             "experienceYears": 9,
             "rating": 4.9,
-            "reviewsCount": 189,
-            "fee": 700,
+            "reviewsCount": 192,
+            "fee": 600,
             "clinic": "Apollo Clinic",
-            "area": "Jubilee Hills, Hyderabad",
-            "availableToday": false,
-            "nextAvailableSlot": "11:00 AM Friday"
+            "area": "Jubilee Hills",
+            "availableToday": true
           },
           {
             "id": "doc-4",
             "name": "Dr. Vikram Rao",
-            "speciality": "General Physician (MBBS, DNB)",
+            "speciality": "General Physician",
             "experienceYears": 14,
             "rating": 4.7,
-            "reviewsCount": 412,
+            "reviewsCount": 420,
             "fee": 500,
             "clinic": "AIG Hospitals",
-            "area": "Gachibowli, Hyderabad",
-            "availableToday": true,
-            "nextAvailableSlot": "02:00 PM Today"
+            "area": "Gachibowli",
+            "availableToday": true
           }
         ]
       }
@@ -259,7 +288,10 @@
       "title": "Special Health Offer",
       "background": {
         "type": "gradient",
-        "gradientColors": ["#0284C7", "#1D4ED8"]
+        "gradientColors": [
+          "#0284C7",
+          "#1D4ED8"
+        ]
       },
       "data": {
         "id": "off-first",
