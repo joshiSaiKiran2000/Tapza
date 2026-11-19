@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { configService, ConfigFetchResult } from '../services/configService';
+import { developerSettingsService } from '../services/developerSettings';
 import { AppRemoteConfig } from '../config/types';
 import { useThemeController } from '../theme';
 
@@ -58,7 +59,24 @@ export const useRemoteConfig = (): UseRemoteConfigResult => {
   );
 
   useEffect(() => {
+    let isMounted = true;
+
     loadConfig();
+
+    const unsubscribe = developerSettingsService.subscribe((settings) => {
+      if (!isMounted) return;
+      setConfig((prev) => {
+        if (!prev || prev.configId !== settings.activeConfigId) {
+          loadConfig();
+        }
+        return prev;
+      });
+    });
+
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
   }, [loadConfig]);
 
   const refresh = useCallback(async () => {
@@ -89,7 +107,7 @@ export const useRemoteConfig = (): UseRemoteConfigResult => {
     refreshing,
     error,
     isFromCache,
-    activeConfigId: config?.configId || 'normal',
+    activeConfigId: (config?.configId as 'normal' | 'diwali') || developerSettingsService.getSettings().activeConfigId || 'normal',
     refresh,
     switchTheme,
   };

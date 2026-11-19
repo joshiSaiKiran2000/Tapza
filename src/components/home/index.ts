@@ -10,4 +10,5 @@ export * from './MedicalIllustration';
 export * from './LabCheckupIllustration';
 export * from './TeleconsultIllustration';
 export * from './UnknownSectionFallback';
+export * from './DiwaliDecoration';
 export * from './DynamicSectionRenderer';

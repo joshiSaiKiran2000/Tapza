@@ -26,7 +26,7 @@ import {
   ErrorState,
   EmptyState,
 } from '../components/common';
-import { DynamicSectionRenderer } from '../components/home';
+import { DynamicSectionRenderer, DiwaliDecoration } from '../components/home';
 import { useRemoteConfig } from '../hooks/useRemoteConfig';
 import type { TabScreenProps } from '../types/navigation';
 
@@ -114,6 +114,13 @@ export const HomeScreen: React.FC<TabScreenProps<'Home'>> = ({ navigation }) => 
                 <AppText variant="lg" weight="bold" color={theme.colors.text} style={styles.deliveryTimeText}>
                   15 minutes
                 </AppText>
+                {activeConfigId === 'diwali' && (
+                  <View style={styles.diwaliPill}>
+                    <AppText variant="xs" weight="bold" color="#C2410C">
+                      🪔 Diwali
+                    </AppText>
+                  </View>
+                )}
               </View>
 
               <TouchableOpacity
@@ -181,6 +188,9 @@ export const HomeScreen: React.FC<TabScreenProps<'Home'>> = ({ navigation }) => 
             </View>
           </TouchableOpacity>
 
+          {/* Diwali Festive Decoration (only active when in Diwali Mode) */}
+          {activeConfigId === 'diwali' && <DiwaliDecoration />}
+
           {/* 4. DYNAMIC HOME SECTIONS RENDERED ACCORDING TO REMOTE CONFIG */}
           {config?.sections.map((section) => (
             <DynamicSectionRenderer
@@ -241,6 +251,15 @@ const styles = StyleSheet.create({
   deliveryTimeRow: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  diwaliPill: {
+    backgroundColor: '#FFEDD5',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 12,
+    marginLeft: 8,
+    borderWidth: 1,
+    borderColor: '#FDBA74',
   },
   deliveryTimeText: {
     fontSize: 19,

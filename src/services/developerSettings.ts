@@ -10,7 +10,7 @@ export interface DeveloperSettings {
 }
 
 export const defaultDevSettings: DeveloperSettings = {
-  activeConfigId: 'diwali',
+  activeConfigId: 'normal',
   simulateLatency: true,
   latencyMs: 600,
   simulateApiFailure: false,
@@ -25,8 +25,12 @@ const listeners: Set<SettingsListener> = new Set();
 export const developerSettingsService = {
   async init(): Promise<DeveloperSettings> {
     const saved = await storageService.getItem<DeveloperSettings>(STORAGE_KEYS.DEV_SETTINGS);
+    const savedConfigId = await storageService.getItem<'normal' | 'diwali'>(STORAGE_KEYS.ACTIVE_CONFIG_ID);
     if (saved) {
       currentDevSettings = { ...defaultDevSettings, ...saved };
+    }
+    if (savedConfigId) {
+      currentDevSettings.activeConfigId = savedConfigId;
     }
     return currentDevSettings;
   },
@@ -38,6 +42,9 @@ export const developerSettingsService = {
   async updateSettings(partial: Partial<DeveloperSettings>): Promise<DeveloperSettings> {
     currentDevSettings = { ...currentDevSettings, ...partial };
     await storageService.setItem(STORAGE_KEYS.DEV_SETTINGS, currentDevSettings);
+    if (partial.activeConfigId) {
+      await storageService.setItem(STORAGE_KEYS.ACTIVE_CONFIG_ID, partial.activeConfigId);
+    }
     listeners.forEach((fn) => fn(currentDevSettings));
     return currentDevSettings;
   },

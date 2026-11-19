@@ -19,7 +19,7 @@ export const configService = {
   async fetchConfig(): Promise<ConfigFetchResult> {
     try {
       const response = await apiClient.get<AppRemoteConfig>('/config');
-      
+
       // Validate response against strict Zod schema
       const validatedConfig = appRemoteConfigSchema.parse(response.data);
 
@@ -35,21 +35,23 @@ export const configService = {
 
       // 1. Try to load previously cached configuration
       const cached = await storageService.getItem<AppRemoteConfig>(STORAGE_KEYS.CACHED_CONFIG);
+      const activeId = developerSettingsService.getSettings().activeConfigId;
       if (cached) {
         try {
           const validatedCache = appRemoteConfigSchema.parse(cached);
-          return {
-            config: validatedCache,
-            fromCache: true,
-            error: 'Loaded from local offline cache due to network error.',
-          };
+          if (validatedCache.configId === activeId) {
+            return {
+              config: validatedCache,
+              fromCache: true,
+              error: 'Loaded from local offline cache due to network error.',
+            };
+          }
         } catch {
           // If cache was corrupted, continue to bundled fallback
         }
       }
 
       // 2. Fall back to bundled fallback config
-      const activeId = developerSettingsService.getSettings().activeConfigId;
       const fallbackRaw = activeId === 'diwali' ? diwaliConfig : normalConfig;
       const validatedFallback = appRemoteConfigSchema.parse(fallbackRaw);
 
