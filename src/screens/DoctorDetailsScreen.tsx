@@ -52,6 +52,7 @@ export const DoctorDetailsScreen: React.FC<RootStackScreenProps<'DoctorDetails'>
     bookingError,
     optimisticBooking,
     bottomSheetRef,
+    isSlotSheetOpen,
     openSlotSheet,
     closeSlotSheet,
     confirmBooking,
@@ -258,22 +259,24 @@ export const DoctorDetailsScreen: React.FC<RootStackScreenProps<'DoctorDetails'>
       </ScrollView>
 
       {/* Gesture-driven Slot Selection Bottom Sheet */}
-      <SlotSelectionBottomSheet
-        ref={bottomSheetRef}
-        doctor={doctor}
-        selectedDate={selectedDate}
-        selectedDateFormatted={selectedDate}
-        slots={slots}
-        loadingSlots={loadingSlots}
-        slotsError={slotsError}
-        onRetrySlots={retryFetchSlots}
-        selectedSlot={selectedSlot}
-        onSelectSlot={setSelectedSlot}
-        onConfirmBooking={handleBookingConfirmed}
-        isBooking={isBooking}
-        bookingError={bookingError}
-        onClose={closeSlotSheet}
-      />
+      {isSlotSheetOpen && (
+        <SlotSelectionBottomSheet
+          ref={bottomSheetRef}
+          doctor={doctor}
+          selectedDate={selectedDate}
+          selectedDateFormatted={selectedDate}
+          slots={slots}
+          loadingSlots={loadingSlots}
+          slotsError={slotsError}
+          onRetrySlots={retryFetchSlots}
+          selectedSlot={selectedSlot}
+          onSelectSlot={setSelectedSlot}
+          onConfirmBooking={handleBookingConfirmed}
+          isBooking={isBooking}
+          bookingError={bookingError}
+          onClose={closeSlotSheet}
+        />
+      )}
     </SafeAreaView>
   );
 };

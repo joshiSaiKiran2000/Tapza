@@ -23,6 +23,7 @@ export interface UseBookingFlowResult {
   bookingError: string | null;
   optimisticBooking: Booking | null;
   bottomSheetRef: React.RefObject<BottomSheet | null>;
+  isSlotSheetOpen: boolean;
   openSlotSheet: () => void;
   closeSlotSheet: () => void;
   confirmBooking: (
@@ -49,6 +50,7 @@ export const useBookingFlow = ({ doctorId }: UseBookingFlowProps): UseBookingFlo
   const [isBooking, setIsBooking] = useState<boolean>(false);
   const [bookingError, setBookingError] = useState<string | null>(null);
   const [optimisticBooking, setOptimisticBooking] = useState<Booking | null>(null);
+  const [isSlotSheetOpen, setIsSlotSheetOpen] = useState<boolean>(false);
 
   // Store last payload for retry functionality
   const lastBookingAttempt = useRef<{ slot: Slot; patientName: string } | null>(null);
@@ -98,11 +100,11 @@ export const useBookingFlow = ({ doctorId }: UseBookingFlowProps): UseBookingFlo
 
   const openSlotSheet = useCallback(() => {
     setBookingError(null);
-    bottomSheetRef.current?.snapToIndex(0);
+    setIsSlotSheetOpen(true);
   }, []);
 
   const closeSlotSheet = useCallback(() => {
-    bottomSheetRef.current?.close();
+    setIsSlotSheetOpen(false);
   }, []);
 
   // 3. Confirm Booking with Optimistic UI updates and Rollback on Conflict/Failure
@@ -163,7 +165,7 @@ export const useBookingFlow = ({ doctorId }: UseBookingFlowProps): UseBookingFlo
           // HTTP 409 Slot Conflict
           setBookingError(
             serverMessage ||
-              'Slot was just booked by another patient. Please choose an alternate slot.'
+            'Slot was just booked by another patient. Please choose an alternate slot.'
           );
           // Mark the conflicted slot as unavailable in local state
           setSlots((prev) =>
@@ -176,7 +178,7 @@ export const useBookingFlow = ({ doctorId }: UseBookingFlowProps): UseBookingFlo
           // General Network or 500 error
           setBookingError(
             serverMessage ||
-              'Connection error during booking. Please tap retry to try again.'
+            'Connection error during booking. Please tap retry to try again.'
           );
         }
         return null;
@@ -211,6 +213,7 @@ export const useBookingFlow = ({ doctorId }: UseBookingFlowProps): UseBookingFlo
     bookingError,
     optimisticBooking,
     bottomSheetRef,
+    isSlotSheetOpen,
     openSlotSheet,
     closeSlotSheet,
     confirmBooking,
