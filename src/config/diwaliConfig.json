@@ -142,6 +142,29 @@
       }
     },
     {
+      "id": "sec-offer-diwali",
+      "type": "offer_strip",
+      "title": "Diwali Offer",
+      "background": {
+        "type": "gradient",
+        "gradientColors": [
+          "#7C182A",
+          "#B91C1C",
+          "#D97706"
+        ]
+      },
+      "data": {
+        "id": "off-diwali-1",
+        "title": "Diwali Special: Flat 35% OFF",
+        "message": "Diwali Special: Flat 35% OFF",
+        "code": "DIWALI35",
+        "discountText": "35% OFF",
+        "description": "Valid on all verified clinic & video visits",
+        "validTill": "30 Nov 2026",
+        "ctaText": "Claim"
+      }
+    },
+    {
       "id": "sec-quick-actions-diwali",
       "type": "quick_actions",
       "title": "Quick Actions",

@@ -121,14 +121,15 @@ export type DoctorCarouselData = z.infer<typeof doctorCarouselDataSchema>;
  * Section: Offer Strip
  */
 export const offerStripDataSchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
   title: z.string(),
   titleHindi: z.string().optional(),
-  code: z.string(),
-  discountText: z.string(),
-  description: z.string(),
-  validTill: z.string(),
-  ctaText: z.string(),
+  message: z.string().optional(),
+  code: z.string().optional(),
+  discountText: z.string().optional(),
+  description: z.string().optional(),
+  validTill: z.string().optional(),
+  ctaText: z.string().optional(),
   highlight: z.boolean().optional(),
 });
 export type OfferStripData = z.infer<typeof offerStripDataSchema>;
