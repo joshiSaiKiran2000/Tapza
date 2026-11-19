@@ -151,62 +151,64 @@ export const HomeScreen: React.FC<TabScreenProps<'Home'>> = ({ navigation }) => 
             </View>
           </View>
 
-          {/* 2. SEARCH BAR */}
-          <View style={styles.searchContainer}>
-            <View
-              style={[
-                styles.searchBar,
-                {
-                  backgroundColor: theme.colors.surfaceVariant,
-                  borderColor: theme.colors.border,
-                },
-              ]}
+            {/* 2. SEARCH BAR (Navigates to DoctorSearch on tap) */}
+            <TouchableOpacity
+              activeOpacity={0.85}
+              accessibilityRole="button"
+              accessibilityLabel="Search doctors, tests, or services"
+              onPress={() => navigation.navigate('DoctorSearch')}
+              style={styles.searchContainer}
             >
-              <Search size={18} color={theme.colors.textMuted} style={{ marginRight: 8 }} />
-              <TextInput
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-                placeholder="Search doctors, tests, or services..."
-                placeholderTextColor={theme.colors.textMuted}
-                style={[styles.searchInput, { color: theme.colors.text }]}
-                onSubmitEditing={() => navigation.navigate('DoctorDetails', { doctorId: 'doc-1' })}
-              />
-            </View>
-          </View>
+              <View
+                style={[
+                  styles.searchBar,
+                  {
+                    backgroundColor: theme.colors.surfaceVariant,
+                    borderColor: theme.colors.border,
+                  },
+                ]}
+              >
+                <Search size={18} color={theme.colors.textMuted} style={{ marginRight: 8 }} />
+                <AppText variant="sm" color={theme.colors.textMuted} style={{ flex: 1 }}>
+                  Search doctors, tests, or services...
+                </AppText>
+              </View>
+        </TouchableOpacity>
 
           {/* 4. DYNAMIC HOME SECTIONS RENDERED ACCORDING TO REMOTE CONFIG */}
-          {config?.sections.map((section) => (
-            <DynamicSectionRenderer
-              key={section.id}
-              section={section}
-              scrollY={scrollY}
-            />
-          ))}
+      {config?.sections.map((section) => (
+        <DynamicSectionRenderer
+          key={section.id}
+          section={section}
+          scrollY={scrollY}
+        />
+      ))}
 
-          {/* Safe empty state if config had 0 sections */}
-          {config?.sections.length === 0 && (
-            <EmptyState
-              title="No Sections Configured"
-              description="Pull down to refresh or check Developer Controls to reset active configuration."
-              actionTitle="Refresh Remote Config"
-              onAction={refresh}
-            />
-          )}
-
-          <View style={{ height: 28 }} />
-        </Animated.ScrollView>
+      {/* Safe empty state if config had 0 sections */}
+      {config?.sections.length === 0 && (
+        <EmptyState
+          title="No Sections Configured"
+          description="Pull down to refresh or check Developer Controls to reset active configuration."
+          actionTitle="Refresh Remote Config"
+          onAction={refresh}
+        />
       )}
 
-      {/* Developer Controls Modal */}
-      <DeveloperSettingsModal
-        visible={devModalVisible}
-        onClose={() => setDevModalVisible(false)}
-        onConfigSwitched={(targetId) => {
-          switchTheme(targetId);
-          setDevModalVisible(false);
-        }}
-        activeConfigId={activeConfigId}
-      />
+      <View style={{ height: 28 }} />
+    </Animated.ScrollView>
+  )
+}
+
+{/* Developer Controls Modal */ }
+<DeveloperSettingsModal
+  visible={devModalVisible}
+  onClose={() => setDevModalVisible(false)}
+  onConfigSwitched={(targetId) => {
+    switchTheme(targetId);
+    setDevModalVisible(false);
+  }}
+  activeConfigId={activeConfigId}
+/>
     </View >
   );
 };
@@ -255,36 +257,36 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
   },
-    profileCircleButton: {
-      width: 36,
-      height: 36,
-      borderRadius: 18,
-      borderWidth: 1.5,
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: '#FFFFFF',
-    },
-    searchContainer: {
-      paddingHorizontal: 16,
-      paddingVertical: 10,
-    },
-    searchBar: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      height: 46,
-      borderRadius: 23,
-      borderWidth: 1,
-      paddingHorizontal: 14,
-    },
-    searchInput: {
-      flex: 1,
-      fontSize: 14,
-      height: '100%',
-    },
-    offlineBanner: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingHorizontal: 16,
-      paddingVertical: 6,
-    },
-  });
+  profileCircleButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    borderWidth: 1.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
+  },
+  searchContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+  },
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 46,
+    borderRadius: 23,
+    borderWidth: 1,
+    paddingHorizontal: 14,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 14,
+    height: '100%',
+  },
+  offlineBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+  },
+});

@@ -18,6 +18,7 @@ export type BottomTabParamList = {
 export type RootStackParamList = {
   MainTabs: NavigatorScreenParams<BottomTabParamList> | undefined;
   DoctorDetails: { doctorId: string; doctorName?: string };
+  DoctorSearch: { query?: string; initialCategory?: string } | undefined;
   BookingDetails: { bookingId: string };
   PrescriptionDetails: { prescriptionId: string };
   BookingSuccess: {

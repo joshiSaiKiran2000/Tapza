@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { BottomTabNavigator } from './BottomTabNavigator';
 import {
   DoctorDetailsScreen,
+  DoctorSearchScreen,
   BookingDetailsScreen,
   PrescriptionDetailsScreen,
   BookingSuccessScreen,
@@ -27,6 +28,11 @@ export const RootNavigator: React.FC = () => {
       }}
     >
       <Stack.Screen name="MainTabs" component={BottomTabNavigator} />
+      <Stack.Screen
+        name="DoctorSearch"
+        component={DoctorSearchScreen}
+        options={{ animation: 'slide_from_right' }}
+      />
       <Stack.Screen
         name="DoctorDetails"
         component={DoctorDetailsScreen}
