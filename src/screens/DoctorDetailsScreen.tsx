@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, ScrollView, ActivityIndicator, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Award,
@@ -24,6 +24,7 @@ import {
   ErrorState,
 } from '../components/common';
 import { SlotSelectionBottomSheet, DateSelectorStrip } from '../components/booking';
+import { defaultDoctorImages } from '../components/home/DoctorCarouselSection';
 import { useBookingFlow } from '../hooks/useBookingFlow';
 import type { RootStackScreenProps } from '../types/navigation';
 import { Slot } from '../types/booking';
@@ -112,9 +113,11 @@ export const DoctorDetailsScreen: React.FC<RootStackScreenProps<'DoctorDetails'>
         <AppCard style={{ marginBottom: theme.spacing.md }}>
           <View style={styles.topRow}>
             <View style={[styles.avatarBox, { backgroundColor: theme.colors.primaryLight }]}>
-              <AppText variant="xl" weight="bold" color={theme.colors.primary}>
-                {doctor.name.split(' ')[1]?.[0] || 'D'}
-              </AppText>
+              <Image
+                source={{ uri: defaultDoctorImages[doctor.id] || defaultDoctorImages['doc-1'] }}
+                style={styles.avatarImage}
+                resizeMode="cover"
+              />
             </View>
             <View style={{ flex: 1, marginLeft: 14 }}>
               <AppText variant="lg" weight="bold">
@@ -297,6 +300,11 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%',
   },
   ratingRow: {
     flexDirection: 'row',
