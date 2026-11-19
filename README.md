@@ -271,3 +271,4 @@ Snapshots:   0 total
 - **GitHub**: [@joshiSaiKiran2000](https://github.com/joshiSaiKiran2000)
 - **Application**: Tapza Care
 - **Platform**: React Native / Expo SDK 58 / Android & iOS
+   App Link: https://github.com/joshiSaiKiran2000/Tapza/releases/tag/TapzaCare 
