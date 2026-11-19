@@ -60,4 +60,37 @@ export const doctorService = {
       throw error;
     }
   },
+
+  /**
+   * Fetches single appointment booking by ID
+   */
+  async getBookingById(bookingId: string): Promise<Booking | null> {
+    const bookings = await this.getBookings();
+    return bookings.find((b) => b.id === bookingId) || null;
+  },
+
+  /**
+   * Cancels an appointment booking
+   */
+  async cancelBooking(bookingId: string): Promise<Booking | null> {
+    try {
+      const response = await apiClient.post<Booking>(`/bookings/${bookingId}/cancel`);
+      const updatedBooking = response.data;
+
+      const cached = (await storageService.getItem<Booking[]>(STORAGE_KEYS.BOOKINGS)) || [];
+      const updated = cached.map((b) =>
+        b.id === bookingId ? { ...b, status: 'cancelled' as const } : b
+      );
+      await storageService.setItem(STORAGE_KEYS.BOOKINGS, updated);
+
+      return updatedBooking;
+    } catch {
+      const cached = (await storageService.getItem<Booking[]>(STORAGE_KEYS.BOOKINGS)) || [];
+      const updated = cached.map((b) =>
+        b.id === bookingId ? { ...b, status: 'cancelled' as const } : b
+      );
+      await storageService.setItem(STORAGE_KEYS.BOOKINGS, updated);
+      return updated.find((b) => b.id === bookingId) || null;
+    }
+  },
 };

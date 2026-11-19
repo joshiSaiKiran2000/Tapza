@@ -44,9 +44,13 @@ export interface Booking {
   consultationFee: number;
   patientName: string;
   patientPhone: string;
-  status: 'confirmed' | 'pending' | 'failed' | 'cancelled';
+  status: 'confirmed' | 'pending' | 'failed' | 'cancelled' | 'attended';
   createdAt: string;
   isOptimistic?: boolean;
+  rating?: number;
+  reviewsCountFormatted?: string;
+  imageUrl?: string;
+  city?: string;
 }
 
 export interface CreateBookingPayload {

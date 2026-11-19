@@ -18,41 +18,91 @@ export const apiClient: AxiosInstance = axios.create({
 // Helper for simulating async delay
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// In-memory mock bookings state (seeded with 2 realistic bookings)
+// In-memory mock bookings state (seeded with 4 realistic bookings matching design: attended & confirmed)
 let storedBookings: Booking[] = [
   {
     id: 'bk-101',
     doctorId: 'doc-1',
-    doctorName: 'Dr. Ramesh Reddy',
-    speciality: 'Cardiologist (DM AIIMS)',
-    clinicName: 'Care Hospitals Banjara Hills',
+    doctorName: 'Dr. Rakesh Kumar',
+    speciality: 'Cardiologist',
+    clinicName: 'Care Hospital',
     clinicAddress: 'Road No. 1, Banjara Hills, Hyderabad',
-    appointmentDate: 'Tomorrow, 20 Nov 2026',
-    appointmentDateRaw: '2026-11-20',
-    appointmentTime: '10:30 AM',
-    slotId: 'slot-doc-1-2026-11-20-4',
+    city: 'Hyderabad',
+    appointmentDate: 'Sat, 15 Nov 2025',
+    appointmentDateRaw: '2025-11-15',
+    appointmentTime: '10:00 AM',
+    slotId: 'slot-doc-1-2025-11-15-2',
     consultationFee: 800,
     patientName: 'Aarav Sharma',
     patientPhone: '+91 98765 43210',
-    status: 'confirmed',
-    createdAt: new Date(Date.now() - 86400000).toISOString(),
+    status: 'attended',
+    rating: 4.7,
+    reviewsCountFormatted: '8k reviews',
+    imageUrl: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=400&q=80',
+    createdAt: new Date(Date.now() - 86400000 * 5).toISOString(),
   },
   {
     id: 'bk-102',
     doctorId: 'doc-2',
     doctorName: 'Dr. Priya Sharma',
-    speciality: 'Pediatrician (MD, DCH)',
-    clinicName: 'Rainbow Children’s Clinic',
+    speciality: 'General Physician',
+    clinicName: 'Care Hospital',
     clinicAddress: 'Near Botanical Garden Road, Kondapur, Hyderabad',
-    appointmentDate: 'Sat, 22 Nov 2026',
-    appointmentDateRaw: '2026-11-22',
-    appointmentTime: '04:15 PM',
-    slotId: 'slot-doc-2-2026-11-22-8',
-    consultationFee: 650,
+    city: 'Hyderabad',
+    appointmentDate: 'Sat, 22 Nov 2025',
+    appointmentDateRaw: '2025-11-22',
+    appointmentTime: '11:30 AM',
+    slotId: 'slot-doc-2-2025-11-22-3',
+    consultationFee: 500,
     patientName: 'Aarav Sharma',
     patientPhone: '+91 98765 43210',
     status: 'confirmed',
-    createdAt: new Date(Date.now() - 172800000).toISOString(),
+    rating: 4.8,
+    reviewsCountFormatted: '12k reviews',
+    imageUrl: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=400&q=80',
+    createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
+  },
+  {
+    id: 'bk-103',
+    doctorId: 'doc-3',
+    doctorName: 'Dr. Sneha Reddy',
+    speciality: 'Pediatrician',
+    clinicName: 'Apollo Clinic',
+    clinicAddress: 'Jubilee Hills Check Post, Hyderabad',
+    city: 'Hyderabad',
+    appointmentDate: 'Mon, 10 Nov 2025',
+    appointmentDateRaw: '2025-11-10',
+    appointmentTime: '04:00 PM',
+    slotId: 'slot-doc-3-2025-11-10-6',
+    consultationFee: 600,
+    patientName: 'Aarav Sharma',
+    patientPhone: '+91 98765 43210',
+    status: 'attended',
+    rating: 4.8,
+    reviewsCountFormatted: '10k reviews',
+    imageUrl: 'https://images.unsplash.com/photo-1622902046580-2b47f47f5471?auto=format&fit=crop&w=400&q=80',
+    createdAt: new Date(Date.now() - 86400000 * 10).toISOString(),
+  },
+  {
+    id: 'bk-104',
+    doctorId: 'doc-4',
+    doctorName: 'Dr. Arjun Mehta',
+    speciality: 'Dermatologist',
+    clinicName: 'Rainbow Clinic',
+    clinicAddress: 'Plot 42, Financial District, Gachibowli, Hyderabad',
+    city: 'Hyderabad',
+    appointmentDate: 'Wed, 26 Nov 2025',
+    appointmentDateRaw: '2025-11-26',
+    appointmentTime: '02:15 PM',
+    slotId: 'slot-doc-4-2025-11-26-5',
+    consultationFee: 700,
+    patientName: 'Aarav Sharma',
+    patientPhone: '+91 98765 43210',
+    status: 'confirmed',
+    rating: 4.7,
+    reviewsCountFormatted: '5k reviews',
+    imageUrl: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=400&q=80',
+    createdAt: new Date(Date.now() - 86400000).toISOString(),
   },
 ];
 
@@ -217,6 +267,19 @@ apiClient.defaults.adapter = async (config: InternalAxiosRequestConfig): Promise
       headers: {},
       config,
     };
+  }
+
+  // 6b. Endpoint: POST /bookings/:id/cancel
+  if (url.includes('/bookings') && url.includes('/cancel') && method === 'POST') {
+    const bookingIdMatch = url.match(/\/bookings\/([a-zA-Z0-9-]+)\/cancel/);
+    if (bookingIdMatch && bookingIdMatch[1]) {
+      const bId = bookingIdMatch[1];
+      const found = storedBookings.find((b) => b.id === bId);
+      if (found) {
+        found.status = 'cancelled';
+        return { data: found, status: 200, statusText: 'OK', headers: {}, config };
+      }
+    }
   }
 
   // 7. Endpoint: GET /bookings
