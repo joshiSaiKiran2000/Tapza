@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -18,9 +18,20 @@ import {
   Check,
   Sparkles,
   Layers,
+  Zap,
+  AlertTriangle,
+  RefreshCw,
+  CheckCircle2,
+  Activity,
+  ShieldAlert,
 } from 'lucide-react-native';
 import { useTheme, useThemeController, FontScale } from '../theme';
 import { useRemoteConfig } from '../hooks/useRemoteConfig';
+import {
+  developerSettingsService,
+  DeveloperSettings,
+} from '../services/developerSettings';
+import { configService } from '../services/configService';
 import { AppText, AppCard, AppBadge, AppButton } from '../components/common';
 import type { RootStackScreenProps } from '../types/navigation';
 
@@ -70,11 +81,60 @@ export const AdminPanelScreen: React.FC<RootStackScreenProps<'AdminPanel'>> = ({
   const { activeConfigId, switchTheme } = useRemoteConfig();
   const isDiwaliMode = activeConfigId === 'diwali';
 
+  // Developer & Mock Settings
+  const [devSettings, setDevSettings] = useState<DeveloperSettings>(
+    developerSettingsService.getSettings()
+  );
+
+  const [testResult, setTestResult] = useState<{
+    status: 'idle' | 'testing' | 'success' | 'resilient_failure';
+    message?: string;
+    details?: string;
+  }>({ status: 'idle' });
+
   const [customBgInput, setCustomBgInput] = useState('');
   const [customTextInput, setCustomTextInput] = useState('');
 
+  useEffect(() => {
+    const unsubscribe = developerSettingsService.subscribe((settings) => {
+      setDevSettings({ ...settings });
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleToggleSetting = async (key: keyof DeveloperSettings, val: any) => {
+    const updated = await developerSettingsService.updateSettings({ [key]: val });
+    setDevSettings({ ...updated });
+  };
+
   const handleToggleDiwali = async (val: boolean) => {
     await switchTheme(val ? 'diwali' : 'normal');
+  };
+
+  const handleRunConfigTest = async () => {
+    setTestResult({ status: 'testing' });
+    try {
+      const res = await configService.fetchConfig();
+      if (res.fromCache) {
+        setTestResult({
+          status: 'resilient_failure',
+          message: 'Resilient Recovery: Fallback Config Loaded',
+          details: `Simulated network error was handled smoothly. Loaded '${res.config.configId}' theme with ${res.config.sections.length} sections. App remains 100% usable!`,
+        });
+      } else {
+        setTestResult({
+          status: 'success',
+          message: 'Mock Backend: GET /config Succeeded (200 OK)',
+          details: `Active config: '${res.config.configId}', sections: ${res.config.sections.length}. App running smoothly.`,
+        });
+      }
+    } catch (err: any) {
+      setTestResult({
+        status: 'resilient_failure',
+        message: 'Handled Gracefully',
+        details: err?.message || 'Recovered without crashing.',
+      });
+    }
   };
 
   const handleApplyCustomBg = () => {
@@ -99,7 +159,14 @@ export const AdminPanelScreen: React.FC<RootStackScreenProps<'AdminPanel'>> = ({
 
   const handleReset = () => {
     resetCustomStyles();
-    Alert.alert('Styles Reset', 'Background color, text color, and font scale restored to defaults.');
+    developerSettingsService.updateSettings({
+      simulateLatency: false,
+      simulateApiFailure: false,
+      simulateEmptyResponses: false,
+      simulateBookingConflict: false,
+    });
+    setTestResult({ status: 'idle' });
+    Alert.alert('Settings Reset', 'Background color, text color, font scale, and mock simulations restored to defaults.');
   };
 
   return (
@@ -123,12 +190,12 @@ export const AdminPanelScreen: React.FC<RootStackScreenProps<'AdminPanel'>> = ({
             Admin Panel
           </AppText>
           <AppText variant="xs" color={theme.colors.textSecondary}>
-            Diwali mode, colors & typography customizations
+            Diwali mode, mock resilience & theme customizations
           </AppText>
         </View>
         <TouchableOpacity
           accessibilityRole="button"
-          accessibilityLabel="Reset styles"
+          accessibilityLabel="Reset styles and mock settings"
           onPress={handleReset}
           style={styles.resetHeaderBtn}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
@@ -182,8 +249,29 @@ export const AdminPanelScreen: React.FC<RootStackScreenProps<'AdminPanel'>> = ({
             <AppBadge
               label={isDiwaliMode ? '🪔 Diwali ON' : 'Diwali OFF'}
               variant={isDiwaliMode ? 'secondary' : 'info'}
-              style={{ marginBottom: 4 }}
+              style={{ marginRight: 6, marginBottom: 4 }}
             />
+            {devSettings.simulateLatency && (
+              <AppBadge
+                label={`⚡ Latency: ${devSettings.latencyMs}ms`}
+                variant="warning"
+                style={{ marginRight: 6, marginBottom: 4 }}
+              />
+            )}
+            {devSettings.simulateApiFailure && (
+              <AppBadge
+                label="⚠️ 500 Failure Active"
+                variant="error"
+                style={{ marginRight: 6, marginBottom: 4 }}
+              />
+            )}
+            {devSettings.simulateEmptyResponses && (
+              <AppBadge
+                label="📭 Empty List Active"
+                variant="warning"
+                style={{ marginBottom: 4 }}
+              />
+            )}
           </View>
         </AppCard>
 
@@ -238,7 +326,230 @@ export const AdminPanelScreen: React.FC<RootStackScreenProps<'AdminPanel'>> = ({
           </View>
         </AppCard>
 
-        {/* 3. BACKGROUND COLOR SECTION */}
+        {/* 3. MOCK BACKEND & RESILIENCE SIMULATOR SECTION */}
+        <AppText variant="xs" weight="bold" color={theme.colors.textSecondary} style={styles.sectionHeader}>
+          MOCK BACKEND & RESILIENCE SIMULATOR
+        </AppText>
+        <AppCard style={{ marginBottom: theme.spacing.md }}>
+          <AppText variant="xs" color={theme.colors.textSecondary} style={{ marginBottom: 12 }}>
+            Simulate network latency, API server failure (500), empty lists, and booking conflicts to verify the app remains resilient, graceful, and fully usable under all conditions.
+          </AppText>
+
+          {/* Switch 1: Simulate Slow Network / Latency */}
+          <View style={styles.simRow}>
+            <View style={styles.simIconText}>
+              <View style={[styles.iconCircle, { backgroundColor: theme.colors.primaryLight }]}>
+                <Zap size={20} color={theme.colors.primary} />
+              </View>
+              <View style={{ marginLeft: 12, flex: 1 }}>
+                <AppText variant="sm" weight="bold" color={theme.colors.text}>
+                  Simulate Slow Network (Latency)
+                </AppText>
+                <AppText variant="xs" color={theme.colors.textSecondary} style={{ marginTop: 2 }}>
+                  Delays API responses to test animated skeleton loaders & pull-to-refresh responsiveness.
+                </AppText>
+              </View>
+            </View>
+            <Switch
+              testID="admin-latency-switch"
+              accessibilityRole="switch"
+              accessibilityLabel="Toggle network latency"
+              value={devSettings.simulateLatency}
+              onValueChange={(val) => handleToggleSetting('simulateLatency', val)}
+              trackColor={{ false: theme.colors.border, true: theme.colors.primaryLight }}
+              thumbColor={devSettings.simulateLatency ? theme.colors.primary : theme.colors.surfaceVariant}
+            />
+          </View>
+
+          {/* Latency Speed Presets */}
+          {devSettings.simulateLatency && (
+            <View style={styles.latencyChipsContainer}>
+              <AppText variant="caption" color={theme.colors.textSecondary} style={{ marginBottom: 6 }}>
+                Select Delay Duration:
+              </AppText>
+              <View style={styles.latencyOptionsRow}>
+                {[
+                  { ms: 600, label: '600ms (Realistic)' },
+                  { ms: 1500, label: '1500ms (Slow 3G)' },
+                  { ms: 3000, label: '3000ms (High Latency)' },
+                ].map((item) => {
+                  const isSelected = devSettings.latencyMs === item.ms;
+                  return (
+                    <TouchableOpacity
+                      key={`lat-${item.ms}`}
+                      accessibilityRole="button"
+                      accessibilityLabel={`Set latency ${item.label}`}
+                      onPress={() => handleToggleSetting('latencyMs', item.ms)}
+                      style={[
+                        styles.latencyChip,
+                        {
+                          backgroundColor: isSelected ? theme.colors.primaryLight : theme.colors.surfaceVariant,
+                          borderColor: isSelected ? theme.colors.primary : theme.colors.border,
+                        },
+                      ]}
+                    >
+                      <AppText
+                        variant="caption"
+                        weight="bold"
+                        color={isSelected ? theme.colors.primary : theme.colors.text}
+                      >
+                        {item.label}
+                      </AppText>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </View>
+          )}
+
+          <View style={[styles.divider, { backgroundColor: theme.colors.border }]} />
+
+          {/* Switch 2: Simulate API Failure (Failed Config Fetch / 500) */}
+          <View style={styles.simRow}>
+            <View style={styles.simIconText}>
+              <View style={[styles.iconCircle, { backgroundColor: theme.colors.errorLight }]}>
+                <AlertTriangle size={20} color={theme.colors.error} />
+              </View>
+              <View style={{ marginLeft: 12, flex: 1 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <AppText variant="sm" weight="bold" color={theme.colors.text}>
+                    Simulate API Failure (500 Error)
+                  </AppText>
+                  {devSettings.simulateApiFailure && (
+                    <AppBadge label="500 Active" variant="error" style={{ marginLeft: 6 }} />
+                  )}
+                </View>
+                <AppText variant="xs" color={theme.colors.textSecondary} style={{ marginTop: 2 }}>
+                  Forces config and data fetches to fail. App recovers via local cache / bundled fallback with retry option.
+                </AppText>
+              </View>
+            </View>
+            <Switch
+              testID="admin-failure-switch"
+              accessibilityRole="switch"
+              accessibilityLabel="Toggle API failure"
+              value={devSettings.simulateApiFailure}
+              onValueChange={(val) => handleToggleSetting('simulateApiFailure', val)}
+              trackColor={{ false: theme.colors.border, true: theme.colors.errorLight }}
+              thumbColor={devSettings.simulateApiFailure ? theme.colors.error : theme.colors.surfaceVariant}
+            />
+          </View>
+
+          <View style={[styles.divider, { backgroundColor: theme.colors.border }]} />
+
+          {/* Switch 3: Simulate Empty List Responses */}
+          <View style={styles.simRow}>
+            <View style={styles.simIconText}>
+              <View style={[styles.iconCircle, { backgroundColor: theme.colors.warningLight }]}>
+                <RefreshCw size={20} color={theme.colors.warning} />
+              </View>
+              <View style={{ marginLeft: 12, flex: 1 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <AppText variant="sm" weight="bold" color={theme.colors.text}>
+                    Simulate Empty List Responses
+                  </AppText>
+                  {devSettings.simulateEmptyResponses && (
+                    <AppBadge label="Empty List" variant="warning" style={{ marginLeft: 6 }} />
+                  )}
+                </View>
+                <AppText variant="xs" color={theme.colors.textSecondary} style={{ marginTop: 2 }}>
+                  Returns [] for doctors, prescriptions, and sections. Verifies clear, actionable EmptyState components.
+                </AppText>
+              </View>
+            </View>
+            <Switch
+              testID="admin-empty-switch"
+              accessibilityRole="switch"
+              accessibilityLabel="Toggle empty list responses"
+              value={devSettings.simulateEmptyResponses}
+              onValueChange={(val) => handleToggleSetting('simulateEmptyResponses', val)}
+              trackColor={{ false: theme.colors.border, true: theme.colors.warningLight }}
+              thumbColor={devSettings.simulateEmptyResponses ? theme.colors.warning : theme.colors.surfaceVariant}
+            />
+          </View>
+
+          <View style={[styles.divider, { backgroundColor: theme.colors.border }]} />
+
+          {/* Switch 4: Simulate Slot Booking Conflict (HTTP 409) */}
+          <View style={styles.simRow}>
+            <View style={styles.simIconText}>
+              <View style={[styles.iconCircle, { backgroundColor: theme.colors.secondaryLight }]}>
+                <ShieldAlert size={20} color={theme.colors.secondary} />
+              </View>
+              <View style={{ marginLeft: 12, flex: 1 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <AppText variant="sm" weight="bold" color={theme.colors.text}>
+                    Simulate Slot Conflict (409)
+                  </AppText>
+                  {devSettings.simulateBookingConflict && (
+                    <AppBadge label="409 Active" variant="secondary" style={{ marginLeft: 6 }} />
+                  )}
+                </View>
+                <AppText variant="xs" color={theme.colors.textSecondary} style={{ marginTop: 2 }}>
+                  Simulates booking race condition when slot is claimed by another patient during checkout.
+                </AppText>
+              </View>
+            </View>
+            <Switch
+              testID="admin-conflict-switch"
+              accessibilityRole="switch"
+              accessibilityLabel="Toggle slot booking conflict"
+              value={devSettings.simulateBookingConflict}
+              onValueChange={(val) => handleToggleSetting('simulateBookingConflict', val)}
+              trackColor={{ false: theme.colors.border, true: theme.colors.secondaryLight }}
+              thumbColor={devSettings.simulateBookingConflict ? theme.colors.secondary : theme.colors.surfaceVariant}
+            />
+          </View>
+
+          {/* Live Resilience Test Action */}
+          <View style={{ marginTop: 14 }}>
+            <AppButton
+              testID="admin-test-config-button"
+              title={testResult.status === 'testing' ? 'Testing Config Fetch...' : 'Test Config Fetch & Resilience Now'}
+              variant="outline"
+              size="sm"
+              icon={<Activity size={16} color={theme.colors.primary} />}
+              onPress={handleRunConfigTest}
+            />
+
+            {/* Test Result Feedback Box */}
+            {testResult.status !== 'idle' && testResult.status !== 'testing' && (
+              <View
+                style={[
+                  styles.testResultBox,
+                  {
+                    backgroundColor:
+                      testResult.status === 'success'
+                        ? theme.colors.successLight
+                        : theme.colors.warningLight,
+                    borderColor:
+                      testResult.status === 'success'
+                        ? theme.colors.success
+                        : theme.colors.warning,
+                  },
+                ]}
+              >
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  {testResult.status === 'success' ? (
+                    <CheckCircle2 size={16} color={theme.colors.success} style={{ marginRight: 6 }} />
+                  ) : (
+                    <AlertTriangle size={16} color={theme.colors.warning} style={{ marginRight: 6 }} />
+                  )}
+                  <AppText variant="xs" weight="bold" color={theme.colors.text}>
+                    {testResult.message}
+                  </AppText>
+                </View>
+                {testResult.details && (
+                  <AppText variant="caption" color={theme.colors.textSecondary} style={{ marginTop: 4 }}>
+                    {testResult.details}
+                  </AppText>
+                )}
+              </View>
+            )}
+          </View>
+        </AppCard>
+
+        {/* 4. BACKGROUND COLOR SECTION */}
         <AppText variant="xs" weight="bold" color={theme.colors.textSecondary} style={styles.sectionHeader}>
           SCREEN BACKGROUND COLOR
         </AppText>
@@ -304,7 +615,7 @@ export const AdminPanelScreen: React.FC<RootStackScreenProps<'AdminPanel'>> = ({
           </View>
         </AppCard>
 
-        {/* 4. TEXT COLOR SECTION */}
+        {/* 5. TEXT COLOR SECTION */}
         <AppText variant="xs" weight="bold" color={theme.colors.textSecondary} style={styles.sectionHeader}>
           TEXT & TYPOGRAPHY COLOR
         </AppText>
@@ -370,7 +681,7 @@ export const AdminPanelScreen: React.FC<RootStackScreenProps<'AdminPanel'>> = ({
           </View>
         </AppCard>
 
-        {/* 5. FONT SIZE & SCALING SECTION */}
+        {/* 6. FONT SIZE & SCALING SECTION */}
         <AppText variant="xs" weight="bold" color={theme.colors.textSecondary} style={styles.sectionHeader}>
           FONT SIZE & SCALING
         </AppText>
@@ -421,7 +732,7 @@ export const AdminPanelScreen: React.FC<RootStackScreenProps<'AdminPanel'>> = ({
 
         {/* Revert / Reset Button */}
         <AppButton
-          title="Reset All Theme Styles to Defaults"
+          title="Reset All Theme Styles & Mock Settings"
           variant="outline"
           size="md"
           icon={<RotateCcw size={16} color={theme.colors.error} />}
@@ -499,12 +810,49 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 10,
   },
+  simRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 6,
+  },
+  simIconText: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    marginRight: 12,
+  },
   iconCircle: {
     width: 40,
     height: 40,
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  latencyChipsContainer: {
+    marginTop: 8,
+    paddingLeft: 52,
+  },
+  latencyOptionsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  latencyChip: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  divider: {
+    height: 1,
+    marginVertical: 12,
+  },
+  testResultBox: {
+    marginTop: 10,
+    padding: 10,
+    borderRadius: 10,
+    borderWidth: 1,
   },
   paletteGrid: {
     flexDirection: 'row',
