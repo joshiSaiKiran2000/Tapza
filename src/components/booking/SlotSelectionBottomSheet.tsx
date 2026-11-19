@@ -63,8 +63,8 @@ export const SlotSelectionBottomSheet = forwardRef<BottomSheet, SlotSelectionBot
     const theme = useTheme();
     const [patientName, setPatientName] = useState('Aarav Sharma');
 
-    // 65% and 90% snap points for gesture-driven height expansion
-    const snapPoints = useMemo(() => ['65%', '90%'], []);
+    // Full-height snap point so the modal opens fully without cutting off content
+    const snapPoints = useMemo(() => ['92%'], []);
 
     const morningSlots = useMemo(
       () => slots.filter((s) => s.period === 'morning'),
@@ -189,164 +189,164 @@ export const SlotSelectionBottomSheet = forwardRef<BottomSheet, SlotSelectionBot
         <BottomSheetScrollView contentContainerStyle={[styles.container, { padding: theme.spacing.md }]}>
           {/* Header */}
           <View style={styles.sheetHeader}>
-              <View style={{ flex: 1, paddingRight: 8 }}>
-                <AppText variant="lg" weight="bold">
-                  Select Consultation Slot
+            <View style={{ flex: 1, paddingRight: 8 }}>
+              <AppText variant="lg" weight="bold">
+                Select Consultation Slot
+              </AppText>
+              <AppText variant="xs" color={theme.colors.textSecondary} style={{ marginTop: 2 }}>
+                {doctor.name} • {doctor.clinicName}
+              </AppText>
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <AppBadge label={selectedDateFormatted} variant="primary" />
+              <TouchableOpacity
+                accessibilityRole="button"
+                accessibilityLabel="Close slot picker"
+                onPress={onClose}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                style={[styles.closeButton, { backgroundColor: theme.colors.surfaceVariant }]}
+              >
+                <X size={18} color={theme.colors.textSecondary} />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Conflict or Booking Error Banner */}
+          {bookingError ? (
+            <View
+              style={[
+                styles.errorBanner,
+                {
+                  backgroundColor: theme.colors.errorLight,
+                  borderColor: theme.colors.error,
+                  marginTop: theme.spacing.sm,
+                },
+              ]}
+            >
+              <ShieldAlert size={20} color={theme.colors.error} />
+              <View style={{ flex: 1, marginLeft: 10 }}>
+                <AppText variant="sm" weight="bold" color={theme.colors.error}>
+                  Booking Conflict / Error
                 </AppText>
-                <AppText variant="xs" color={theme.colors.textSecondary} style={{ marginTop: 2 }}>
-                  {doctor.name} • {doctor.clinicName}
+                <AppText variant="xs" color={theme.colors.error} style={{ marginTop: 2 }}>
+                  {bookingError}
                 </AppText>
-              </View>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                <AppBadge label={selectedDateFormatted} variant="primary" />
-                <TouchableOpacity
-                  accessibilityRole="button"
-                  accessibilityLabel="Close slot picker"
-                  onPress={onClose}
-                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                  style={[styles.closeButton, { backgroundColor: theme.colors.surfaceVariant }]}
-                >
-                  <X size={18} color={theme.colors.textSecondary} />
-                </TouchableOpacity>
               </View>
             </View>
+          ) : null}
 
-            {/* Conflict or Booking Error Banner */}
-            {bookingError ? (
-              <View
-                style={[
-                  styles.errorBanner,
-                  {
-                    backgroundColor: theme.colors.errorLight,
-                    borderColor: theme.colors.error,
-                    marginTop: theme.spacing.sm,
-                  },
-                ]}
-              >
-                <ShieldAlert size={20} color={theme.colors.error} />
-                <View style={{ flex: 1, marginLeft: 10 }}>
-                  <AppText variant="sm" weight="bold" color={theme.colors.error}>
-                    Booking Conflict / Error
-                  </AppText>
-                  <AppText variant="xs" color={theme.colors.error} style={{ marginTop: 2 }}>
-                    {bookingError}
+          {/* Loading Slots Indicator */}
+          {loadingSlots ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color={theme.colors.primary} />
+              <AppText variant="sm" color={theme.colors.textSecondary} style={{ marginTop: 10 }}>
+                Fetching live slots from {doctor.clinicName}...
+              </AppText>
+            </View>
+          ) : slotsError ? (
+            /* Error state with retry */
+            <View style={styles.errorContainer}>
+              <AlertCircle size={36} color={theme.colors.error} />
+              <AppText variant="md" weight="bold" style={{ marginTop: 8 }}>
+                Could not load slots
+              </AppText>
+              <AppText variant="xs" color={theme.colors.textSecondary} style={{ textAlign: 'center', marginTop: 4 }}>
+                {slotsError}
+              </AppText>
+              <AppButton
+                title="Retry Fetching Slots"
+                size="sm"
+                variant="outline"
+                icon={<RefreshCw size={14} color={theme.colors.primary} />}
+                style={{ marginTop: 12 }}
+                onPress={onRetrySlots}
+              />
+            </View>
+          ) : slots.length === 0 ? (
+            /* Empty state */
+            <View style={styles.emptyContainer}>
+              <Clock size={36} color={theme.colors.textMuted} />
+              <AppText variant="md" weight="bold" style={{ marginTop: 8 }}>
+                No Slots Available for this Date
+              </AppText>
+              <AppText variant="xs" color={theme.colors.textMuted} style={{ marginTop: 4 }}>
+                Please select another date above to view available appointments.
+              </AppText>
+            </View>
+          ) : (
+            <>
+              {/* Slot Sections */}
+              {renderSlotSection(
+                'Morning Slots',
+                <Sun size={16} color="#F59E0B" />,
+                morningSlots
+              )}
+              {renderSlotSection(
+                'Afternoon Slots',
+                <Sunset size={16} color="#EA580C" />,
+                afternoonSlots
+              )}
+              {renderSlotSection(
+                'Evening Slots',
+                <Moon size={16} color="#6366F1" />,
+                eveningSlots
+              )}
+
+              {/* Patient Details Input */}
+              <AppCard style={{ marginTop: theme.spacing.md, backgroundColor: theme.colors.surfaceVariant }}>
+                <View style={styles.patientRow}>
+                  <User size={18} color={theme.colors.primary} style={{ marginRight: 8 }} />
+                  <AppText variant="sm" weight="semibold">
+                    Patient Name
                   </AppText>
                 </View>
-              </View>
-            ) : null}
-
-            {/* Loading Slots Indicator */}
-            {loadingSlots ? (
-              <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color={theme.colors.primary} />
-                <AppText variant="sm" color={theme.colors.textSecondary} style={{ marginTop: 10 }}>
-                  Fetching live slots from {doctor.clinicName}...
-                </AppText>
-              </View>
-            ) : slotsError ? (
-              /* Error state with retry */
-              <View style={styles.errorContainer}>
-                <AlertCircle size={36} color={theme.colors.error} />
-                <AppText variant="md" weight="bold" style={{ marginTop: 8 }}>
-                  Could not load slots
-                </AppText>
-                <AppText variant="xs" color={theme.colors.textSecondary} style={{ textAlign: 'center', marginTop: 4 }}>
-                  {slotsError}
-                </AppText>
-                <AppButton
-                  title="Retry Fetching Slots"
-                  size="sm"
-                  variant="outline"
-                  icon={<RefreshCw size={14} color={theme.colors.primary} />}
-                  style={{ marginTop: 12 }}
-                  onPress={onRetrySlots}
+                <TextInput
+                  value={patientName}
+                  onChangeText={setPatientName}
+                  placeholder="Enter patient name"
+                  placeholderTextColor={theme.colors.textMuted}
+                  style={[
+                    styles.input,
+                    {
+                      backgroundColor: theme.colors.surface,
+                      borderColor: theme.colors.border,
+                      color: theme.colors.text,
+                      borderRadius: theme.borderRadius.md,
+                    },
+                  ]}
                 />
-              </View>
-            ) : slots.length === 0 ? (
-              /* Empty state */
-              <View style={styles.emptyContainer}>
-                <Clock size={36} color={theme.colors.textMuted} />
-                <AppText variant="md" weight="bold" style={{ marginTop: 8 }}>
-                  No Slots Available for this Date
-                </AppText>
-                <AppText variant="xs" color={theme.colors.textMuted} style={{ marginTop: 4 }}>
-                  Please select another date above to view available appointments.
-                </AppText>
-              </View>
-            ) : (
-              <>
-                {/* Slot Sections */}
-                {renderSlotSection(
-                  'Morning Slots',
-                  <Sun size={16} color="#F59E0B" />,
-                  morningSlots
-                )}
-                {renderSlotSection(
-                  'Afternoon Slots',
-                  <Sunset size={16} color="#EA580C" />,
-                  afternoonSlots
-                )}
-                {renderSlotSection(
-                  'Evening Slots',
-                  <Moon size={16} color="#6366F1" />,
-                  eveningSlots
-                )}
 
-                {/* Patient Details Input */}
-                <AppCard style={{ marginTop: theme.spacing.md, backgroundColor: theme.colors.surfaceVariant }}>
-                  <View style={styles.patientRow}>
-                    <User size={18} color={theme.colors.primary} style={{ marginRight: 8 }} />
-                    <AppText variant="sm" weight="semibold">
-                      Patient Name
-                    </AppText>
-                  </View>
-                  <TextInput
-                    value={patientName}
-                    onChangeText={setPatientName}
-                    placeholder="Enter patient name"
-                    placeholderTextColor={theme.colors.textMuted}
-                    style={[
-                      styles.input,
-                      {
-                        backgroundColor: theme.colors.surface,
-                        borderColor: theme.colors.border,
-                        color: theme.colors.text,
-                        borderRadius: theme.borderRadius.md,
-                      },
-                    ]}
-                  />
+                <View style={[styles.feeRow, { marginTop: 10 }]}>
+                  <AppText variant="xs" color={theme.colors.textMuted}>
+                    Consultation Fee
+                  </AppText>
+                  <AppText variant="md" weight="bold" color={theme.colors.primary}>
+                    ₹{doctor.fee}
+                  </AppText>
+                </View>
+              </AppCard>
 
-                  <View style={[styles.feeRow, { marginTop: 10 }]}>
-                    <AppText variant="xs" color={theme.colors.textMuted}>
-                      Consultation Fee
-                    </AppText>
-                    <AppText variant="md" weight="bold" color={theme.colors.primary}>
-                      ₹{doctor.fee}
-                    </AppText>
-                  </View>
-                </AppCard>
-
-                {/* Confirmation Button */}
-                <AppButton
-                  title={
-                    selectedSlot
-                      ? `Confirm Booking for ${selectedSlot.time}`
-                      : 'Select a Slot Above'
+              {/* Confirmation Button */}
+              <AppButton
+                title={
+                  selectedSlot
+                    ? `Confirm Booking for ${selectedSlot.time}`
+                    : 'Select a Slot Above'
+                }
+                size="lg"
+                variant="primary"
+                loading={isBooking}
+                disabled={!selectedSlot || isBooking || !patientName.trim()}
+                icon={<CheckCircle size={18} color={theme.colors.white} />}
+                style={{ marginTop: theme.spacing.md, marginBottom: 20 }}
+                onPress={() => {
+                  if (selectedSlot) {
+                    onConfirmBooking(selectedSlot, patientName.trim());
                   }
-                  size="lg"
-                  variant="primary"
-                  loading={isBooking}
-                  disabled={!selectedSlot || isBooking || !patientName.trim()}
-                  icon={<CheckCircle size={18} color={theme.colors.white} />}
-                  style={{ marginTop: theme.spacing.md, marginBottom: 20 }}
-                  onPress={() => {
-                    if (selectedSlot) {
-                      onConfirmBooking(selectedSlot, patientName.trim());
-                    }
-                  }}
-                />
-              </>
-            )}
+                }}
+              />
+            </>
+          )}
         </BottomSheetScrollView>
       </BottomSheet>
     );
