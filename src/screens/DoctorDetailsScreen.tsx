@@ -78,7 +78,7 @@ export const DoctorDetailsScreen: React.FC<RootStackScreenProps<'DoctorDetails'>
   if (loadingDoctor) {
     return (
       <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.background }]}>
-        <AppHeader title="Doctor Profile" showBack onBack={() => navigation.goBack()} />
+        <AppHeader title="Book Appointment" showBack onBack={() => navigation.goBack()} />
         <DoctorDetailsSkeleton />
       </SafeAreaView>
     );
@@ -87,7 +87,7 @@ export const DoctorDetailsScreen: React.FC<RootStackScreenProps<'DoctorDetails'>
   if (doctorError || !doctor) {
     return (
       <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.background }]}>
-        <AppHeader title="Doctor Profile" showBack onBack={() => navigation.goBack()} />
+        <AppHeader title="Book Appointment" showBack onBack={() => navigation.goBack()} />
         <ErrorState
           title="Unable to Load Doctor Profile"
           message={doctorError || 'Doctor not found'}
@@ -100,8 +100,7 @@ export const DoctorDetailsScreen: React.FC<RootStackScreenProps<'DoctorDetails'>
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.background }]}>
       <AppHeader
-        title={doctor.name}
-        subtitle={`${doctor.speciality} • ${doctor.clinicName}`}
+        title="Book Appointment"
         showBack
         onBack={() => navigation.goBack()}
       />
