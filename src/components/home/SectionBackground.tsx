@@ -57,7 +57,7 @@ export const SectionBackground: React.FC<SectionBackgroundProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
+    alignSelf: 'stretch',
     overflow: 'hidden',
   },
 });
