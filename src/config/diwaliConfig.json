@@ -1,0 +1,284 @@
+{
+  "version": "1.1.0",
+  "configId": "diwali",
+  "configName": "Festive Diwali Wellness Theme",
+  "lastUpdated": "2026-11-19T10:00:00Z",
+  "festival": {
+    "name": "Diwali",
+    "greeting": "Happy Diwali & Good Health to Your Family!",
+    "greetingHindi": "शुभ दीपावली – आपके और आपके परिवार के उत्तम स्वास्थ्य की मंगलकामनाएं",
+    "bannerMessage": "✨ Diwali Health & Wellness Festival: Upto 40% Off on Family Consultations",
+    "badgeText": "🪔 Diwali Special Edition"
+  },
+  "theme": {
+    "colors": {
+      "primary": "#C2410C",
+      "primaryLight": "#FFEDD5",
+      "primaryDark": "#7C2D12",
+      "secondary": "#D97706",
+      "secondaryLight": "#FEF3C7",
+      "accent": "#B45309",
+      "background": "#FFFDF7",
+      "surface": "#FFFFFF",
+      "surfaceVariant": "#FEF9EE",
+      "card": "#FFFFFF",
+      "text": "#431407",
+      "textSecondary": "#78350F",
+      "textMuted": "#9A6B48",
+      "border": "#FED7AA",
+      "divider": "#FEF3C7",
+      "tabBarBackground": "#FFFFFF",
+      "tabBarActive": "#C2410C",
+      "tabBarInactive": "#A8886D"
+    },
+    "darkColors": {
+      "primary": "#FB923C",
+      "primaryLight": "#431407",
+      "primaryDark": "#9A3412",
+      "secondary": "#FBBF24",
+      "secondaryLight": "#451A03",
+      "accent": "#F59E0B",
+      "background": "#1C110C",
+      "surface": "#2D1B13",
+      "surfaceVariant": "#3E271D",
+      "card": "#2D1B13",
+      "text": "#FFF7ED",
+      "textSecondary": "#FDBA74",
+      "textMuted": "#A8836F",
+      "border": "#4E2B1E",
+      "divider": "#3E271D",
+      "tabBarBackground": "#2D1B13",
+      "tabBarActive": "#FB923C",
+      "tabBarInactive": "#A8836F"
+    }
+  },
+  "navigationTabs": [
+    { "id": "home", "name": "Home", "title": "Home", "icon": "Home", "enabled": true },
+    { "id": "bookings", "name": "Bookings", "title": "Bookings", "icon": "Calendar", "enabled": true },
+    { "id": "prescriptions", "name": "Prescriptions", "title": "Prescriptions", "icon": "Pill", "enabled": true },
+    { "id": "profile", "name": "Profile", "title": "Profile", "icon": "User", "enabled": true }
+  ],
+  "sections": [
+    {
+      "id": "sec-offer-diwali",
+      "type": "offer_strip",
+      "title": "Diwali Mahotsav Health Offer",
+      "background": {
+        "type": "gradient",
+        "gradientColors": ["#9A3412", "#EA580C"]
+      },
+      "data": {
+        "id": "off-diwali",
+        "title": "🪔 Diwali Arogya Utsav: Flat 35% OFF on Family Checkups",
+        "titleHindi": "दीपावली आरोग्य उत्सव – पूरे परिवार की स्वास्थ्य जांच पर 35% की छूट",
+        "code": "DIWALIHEALTH",
+        "discountText": "Flat 35% OFF",
+        "description": "Light up your family's health this Diwali with comprehensive cardiac and sugar screenings.",
+        "validTill": "Festival Special (Expires 25 Nov 2026)",
+        "ctaText": "Redeem Code",
+        "highlight": true
+      }
+    },
+    {
+      "id": "sec-hero-diwali",
+      "type": "hero_banner",
+      "title": "Diwali Greeting",
+      "background": {
+        "type": "gradient",
+        "gradientColors": ["#B45309", "#C2410C"]
+      },
+      "data": {
+        "badgeText": "🪔 Shubh Deepavali 2026",
+        "headline": "Celebrate Diwali with Healthy Hearts & Smiles",
+        "headlineHindi": "इस दिवाली स्वास्थ्य को दें प्राथमिकता",
+        "subheadline": "Pollution protection, post-festive sugar detox, and 24x7 doctor consultations across Hyderabad.",
+        "ctaText": "Book Festive Family Consultation",
+        "ctaRoute": "DoctorDetails",
+        "ctaParams": { "doctorId": "doc-1", "doctorName": "Dr. Ramesh Reddy" },
+        "accentNote": "✨ 10,000+ Hyderabad Families Trust Tapza Care"
+      }
+    },
+    {
+      "id": "sec-categories-diwali",
+      "type": "category_chips",
+      "title": "Festive Care Departments",
+      "subtitle": "Specialist support during the festive season",
+      "background": {
+        "type": "solid",
+        "color": "#FFFDF7"
+      },
+      "data": {
+        "categories": [
+          { "id": "cat-all", "label": "All Clinics", "hindiLabel": "सभी सेवाएं", "icon": "Sparkles", "isSpecial": true },
+          { "id": "cat-cardio", "label": "Heart Care", "hindiLabel": "हृदय स्वास्थ्य", "icon": "Heart", "specialityQuery": "Cardiologist" },
+          { "id": "cat-diab", "label": "Diabetic & Sugar", "hindiLabel": "मधुमेह जांच", "icon": "Activity", "specialityQuery": "Physician" },
+          { "id": "cat-pulmo", "label": "Lungs & Pollution", "hindiLabel": "श्वसन व फेफड़े", "icon": "ShieldCheck", "specialityQuery": "Pulmonologist" },
+          { "id": "cat-pedia", "label": "Child Care", "hindiLabel": "शिशु सुरक्षा", "icon": "Baby", "specialityQuery": "Pediatrician" },
+          { "id": "cat-derma", "label": "Skin & Glow", "hindiLabel": "त्वचा देखभाल", "icon": "Smile", "specialityQuery": "Dermatologist" }
+        ]
+      }
+    },
+    {
+      "id": "sec-services-diwali",
+      "type": "service_grid",
+      "title": "Diwali Family Health Packages",
+      "subtitle": "Curated for the festive season & post-sweets wellness",
+      "background": {
+        "type": "solid",
+        "color": "#FEF9EE"
+      },
+      "data": {
+        "columns": 2,
+        "services": [
+          {
+            "id": "srv-diwali-1",
+            "title": "Post-Diwali Sugar & Lipid Pack",
+            "subtitle": "HbA1c, Triglycerides & Liver Panel",
+            "icon": "Activity",
+            "tag": "Festive Special",
+            "route": "DoctorDetails",
+            "discount": "₹899 (Save 45%)"
+          },
+          {
+            "id": "srv-diwali-2",
+            "title": "Smoke & Air Detox Screening",
+            "subtitle": "Spirometry, Chest X-Ray & O2 Audit",
+            "icon": "ShieldCheck",
+            "tag": "Pollution Guard",
+            "route": "DoctorDetails",
+            "discount": "₹1,199 (Save 40%)"
+          },
+          {
+            "id": "srv-diwali-3",
+            "title": "Elderly Parents Heart Check",
+            "subtitle": "Echo, ECG, Cardiologist Consultation",
+            "icon": "HeartPulse",
+            "tag": "Best for Parents",
+            "route": "DoctorDetails",
+            "discount": "₹1,599 (Save 50%)"
+          },
+          {
+            "id": "srv-diwali-4",
+            "title": "Children’s Burn & Allergy Care",
+            "subtitle": "Fast-track pediatric emergency OPD",
+            "icon": "Baby",
+            "tag": "24x7 Ready",
+            "route": "DoctorDetails",
+            "discount": "₹499 Priority"
+          }
+        ]
+      }
+    },
+    {
+      "id": "sec-doctors-diwali",
+      "type": "doctor_carousel",
+      "title": "Doctors on Duty This Diwali",
+      "subtitle": "In-clinic and online slots available uninterrupted",
+      "background": {
+        "type": "gradient",
+        "gradientColors": ["#FFF7ED", "#FEF3C7"]
+      },
+      "data": {
+        "doctors": [
+          {
+            "id": "doc-1",
+            "name": "Dr. Ramesh Reddy",
+            "speciality": "Senior Cardiologist (DM AIIMS)",
+            "experienceYears": 16,
+            "rating": 4.9,
+            "reviewsCount": 352,
+            "fee": 800,
+            "clinic": "Care Hospitals",
+            "area": "Banjara Hills, Hyderabad",
+            "availableToday": true,
+            "nextAvailableSlot": "10:30 AM Tomorrow"
+          },
+          {
+            "id": "doc-4",
+            "name": "Dr. Vikram Rao",
+            "speciality": "General Physician (MBBS, DNB)",
+            "experienceYears": 14,
+            "rating": 4.7,
+            "reviewsCount": 420,
+            "fee": 500,
+            "clinic": "AIG Hospitals",
+            "area": "Gachibowli, Hyderabad",
+            "availableToday": true,
+            "nextAvailableSlot": "02:00 PM Today"
+          },
+          {
+            "id": "doc-2",
+            "name": "Dr. Priya Sharma",
+            "speciality": "Consultant Pediatrician (MD, DCH)",
+            "experienceYears": 12,
+            "rating": 4.8,
+            "reviewsCount": 218,
+            "fee": 650,
+            "clinic": "Rainbow Children’s Clinic",
+            "area": "Kondapur, Hyderabad",
+            "availableToday": true,
+            "nextAvailableSlot": "04:15 PM Today"
+          },
+          {
+            "id": "doc-3",
+            "name": "Dr. Ananya Sen",
+            "speciality": "Consultant Dermatologist (MD)",
+            "experienceYears": 9,
+            "rating": 4.9,
+            "reviewsCount": 192,
+            "fee": 700,
+            "clinic": "Apollo Clinic",
+            "area": "Jubilee Hills, Hyderabad",
+            "availableToday": false,
+            "nextAvailableSlot": "11:00 AM Friday"
+          }
+        ]
+      }
+    },
+    {
+      "id": "sec-quick-actions-diwali",
+      "type": "quick_actions",
+      "title": "Festive Care Shortcuts",
+      "subtitle": "Emergency and everyday health tools",
+      "background": {
+        "type": "solid",
+        "color": "#FFFDF7"
+      },
+      "data": {
+        "actions": [
+          {
+            "id": "qa-1",
+            "label": "Festive OPD",
+            "sublabel": "Walk-in slots",
+            "icon": "Calendar",
+            "route": "DoctorDetails",
+            "badge": "Active"
+          },
+          {
+            "id": "qa-2",
+            "label": "Medicine Alert",
+            "sublabel": "Don't miss pills",
+            "icon": "Pill",
+            "route": "Prescriptions",
+            "badge": "Reminder"
+          },
+          {
+            "id": "qa-3",
+            "label": "Emergency 24x7",
+            "sublabel": "Ambulance & SOS",
+            "icon": "PhoneCall",
+            "route": "DoctorDetails",
+            "badge": "SOS"
+          },
+          {
+            "id": "qa-4",
+            "label": "My Appointments",
+            "sublabel": "Confirmed slips",
+            "icon": "Clock",
+            "route": "Bookings"
+          }
+        ]
+      }
+    }
+  ]
+}

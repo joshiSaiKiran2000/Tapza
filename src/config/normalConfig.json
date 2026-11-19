@@ -1,0 +1,276 @@
+{
+  "version": "1.0.0",
+  "configId": "normal",
+  "configName": "Default Clinical Healthcare Theme",
+  "lastUpdated": "2026-11-19T10:00:00Z",
+  "theme": {
+    "colors": {
+      "primary": "#0D7A73",
+      "primaryLight": "#E6F4F2",
+      "primaryDark": "#07504C",
+      "secondary": "#0284C7",
+      "secondaryLight": "#E0F2FE",
+      "accent": "#2563EB",
+      "background": "#F8FAFC",
+      "surface": "#FFFFFF",
+      "surfaceVariant": "#F1F5F9",
+      "card": "#FFFFFF",
+      "text": "#0F172A",
+      "textSecondary": "#475569",
+      "textMuted": "#94A3B8",
+      "border": "#E2E8F0",
+      "divider": "#F1F5F9",
+      "tabBarBackground": "#FFFFFF",
+      "tabBarActive": "#0D7A73",
+      "tabBarInactive": "#94A3B8"
+    },
+    "darkColors": {
+      "primary": "#2DD4BF",
+      "primaryLight": "#134E48",
+      "primaryDark": "#0D7A73",
+      "secondary": "#38BDF8",
+      "secondaryLight": "#082F49",
+      "accent": "#60A5FA",
+      "background": "#0F172A",
+      "surface": "#1E293B",
+      "surfaceVariant": "#334155",
+      "card": "#1E293B",
+      "text": "#F8FAFC",
+      "textSecondary": "#CBD5E1",
+      "textMuted": "#64748B",
+      "border": "#334155",
+      "divider": "#1E293B",
+      "tabBarBackground": "#1E293B",
+      "tabBarActive": "#2DD4BF",
+      "tabBarInactive": "#64748B"
+    }
+  },
+  "navigationTabs": [
+    { "id": "home", "name": "Home", "title": "Home", "icon": "Home", "enabled": true },
+    { "id": "bookings", "name": "Bookings", "title": "Bookings", "icon": "Calendar", "enabled": true },
+    { "id": "prescriptions", "name": "Prescriptions", "title": "Prescriptions", "icon": "Pill", "enabled": true },
+    { "id": "profile", "name": "Profile", "title": "Profile", "icon": "User", "enabled": true }
+  ],
+  "sections": [
+    {
+      "id": "sec-hero",
+      "type": "hero_banner",
+      "title": "Welcome",
+      "background": {
+        "type": "gradient",
+        "gradientColors": ["#0D7A73", "#115E59"]
+      },
+      "data": {
+        "badgeText": "Hyderabad's Trusted Care",
+        "headline": "Expert Doctors at Your Neighborhood Clinics",
+        "headlineHindi": "विश्वसनीय डॉक्टरों से परामर्श करें",
+        "subheadline": "Instant booking with verified doctors across Banjara Hills, Kondapur & Gachibowli.",
+        "ctaText": "Find Doctor & Book Slot",
+        "ctaRoute": "DoctorDetails",
+        "ctaParams": { "doctorId": "doc-1", "doctorName": "Dr. Ramesh Reddy" },
+        "accentNote": "★ 4.9 Average Patient Rating"
+      }
+    },
+    {
+      "id": "sec-quick-actions",
+      "type": "quick_actions",
+      "title": "Quick Actions",
+      "subtitle": "Essential healthcare shortcuts",
+      "background": {
+        "type": "solid",
+        "color": "#F8FAFC"
+      },
+      "data": {
+        "actions": [
+          {
+            "id": "qa-1",
+            "label": "Book Doctor",
+            "sublabel": "In-clinic visit",
+            "icon": "Calendar",
+            "route": "DoctorDetails",
+            "badge": "Instant"
+          },
+          {
+            "id": "qa-2",
+            "label": "Medicine Tracker",
+            "sublabel": "Daily doses",
+            "icon": "Pill",
+            "route": "Prescriptions",
+            "badge": "3 Today"
+          },
+          {
+            "id": "qa-3",
+            "label": "My Bookings",
+            "sublabel": "Appointments",
+            "icon": "Clock",
+            "route": "Bookings"
+          },
+          {
+            "id": "qa-4",
+            "label": "Emergency",
+            "sublabel": "24x7 Helpline",
+            "icon": "PhoneCall",
+            "route": "DoctorDetails",
+            "badge": "24/7"
+          }
+        ]
+      }
+    },
+    {
+      "id": "sec-categories",
+      "type": "category_chips",
+      "title": "Top Specialities",
+      "subtitle": "Select a department to view specialists",
+      "background": {
+        "type": "solid",
+        "color": "#FFFFFF"
+      },
+      "data": {
+        "categories": [
+          { "id": "cat-all", "label": "All Specialities", "hindiLabel": "सभी", "icon": "Sparkles", "isSpecial": true },
+          { "id": "cat-cardio", "label": "Cardiology", "hindiLabel": "हृदय रोग", "icon": "Heart", "specialityQuery": "Cardiologist" },
+          { "id": "cat-pedia", "label": "Pediatrics", "hindiLabel": "बाल रोग", "icon": "Baby", "specialityQuery": "Pediatrician" },
+          { "id": "cat-physician", "label": "General Physician", "hindiLabel": "सामान्य चिकित्सक", "icon": "Stethoscope", "specialityQuery": "Physician" },
+          { "id": "cat-derma", "label": "Dermatology", "hindiLabel": "त्वचा विशेषज्ञ", "icon": "Smile", "specialityQuery": "Dermatologist" },
+          { "id": "cat-ortho", "label": "Orthopedics", "hindiLabel": "हड्डी रोग", "icon": "Activity", "specialityQuery": "Orthopedic" }
+        ]
+      }
+    },
+    {
+      "id": "sec-doctors",
+      "type": "doctor_carousel",
+      "title": "Verified Hyderabad Doctors",
+      "subtitle": "Available for in-person consultation today",
+      "background": {
+        "type": "gradient",
+        "gradientColors": ["#F0FDFA", "#F8FAFC"]
+      },
+      "data": {
+        "doctors": [
+          {
+            "id": "doc-1",
+            "name": "Dr. Ramesh Reddy",
+            "speciality": "Senior Cardiologist (DM AIIMS)",
+            "experienceYears": 16,
+            "rating": 4.9,
+            "reviewsCount": 348,
+            "fee": 800,
+            "clinic": "Care Hospitals",
+            "area": "Banjara Hills, Hyderabad",
+            "availableToday": true,
+            "nextAvailableSlot": "10:30 AM Tomorrow"
+          },
+          {
+            "id": "doc-2",
+            "name": "Dr. Priya Sharma",
+            "speciality": "Consultant Pediatrician (MD, DCH)",
+            "experienceYears": 12,
+            "rating": 4.8,
+            "reviewsCount": 215,
+            "fee": 650,
+            "clinic": "Rainbow Children’s Clinic",
+            "area": "Kondapur, Hyderabad",
+            "availableToday": true,
+            "nextAvailableSlot": "04:15 PM Today"
+          },
+          {
+            "id": "doc-3",
+            "name": "Dr. Ananya Sen",
+            "speciality": "Consultant Dermatologist (MD)",
+            "experienceYears": 9,
+            "rating": 4.9,
+            "reviewsCount": 189,
+            "fee": 700,
+            "clinic": "Apollo Clinic",
+            "area": "Jubilee Hills, Hyderabad",
+            "availableToday": false,
+            "nextAvailableSlot": "11:00 AM Friday"
+          },
+          {
+            "id": "doc-4",
+            "name": "Dr. Vikram Rao",
+            "speciality": "General Physician (MBBS, DNB)",
+            "experienceYears": 14,
+            "rating": 4.7,
+            "reviewsCount": 412,
+            "fee": 500,
+            "clinic": "AIG Hospitals",
+            "area": "Gachibowli, Hyderabad",
+            "availableToday": true,
+            "nextAvailableSlot": "02:00 PM Today"
+          }
+        ]
+      }
+    },
+    {
+      "id": "sec-services",
+      "type": "service_grid",
+      "title": "Preventive Health Packages",
+      "subtitle": "Comprehensive tests at discounted clinic rates",
+      "background": {
+        "type": "solid",
+        "color": "#F8FAFC"
+      },
+      "data": {
+        "columns": 2,
+        "services": [
+          {
+            "id": "srv-1",
+            "title": "Comprehensive Heart Check",
+            "subtitle": "ECG, 2D Echo, Lipid & TMT",
+            "icon": "HeartPulse",
+            "tag": "Most Popular",
+            "route": "DoctorDetails",
+            "discount": "₹1,499 (Save 40%)"
+          },
+          {
+            "id": "srv-2",
+            "title": "Diabetes Care Pack",
+            "subtitle": "HbA1c, Fasting Sugar & Renal",
+            "icon": "Activity",
+            "tag": "Essential",
+            "route": "DoctorDetails",
+            "discount": "₹799 (Save 35%)"
+          },
+          {
+            "id": "srv-3",
+            "title": "Full Body Wellness",
+            "subtitle": "68 Key Health Parameters",
+            "icon": "ShieldCheck",
+            "tag": "Family Care",
+            "route": "DoctorDetails",
+            "discount": "₹1,999 (Save 50%)"
+          },
+          {
+            "id": "srv-4",
+            "title": "Child Immunization",
+            "subtitle": "Vaccine schedule & growth audit",
+            "icon": "Baby",
+            "tag": "Pediatric",
+            "route": "DoctorDetails",
+            "discount": "₹599 Visit"
+          }
+        ]
+      }
+    },
+    {
+      "id": "sec-offer",
+      "type": "offer_strip",
+      "title": "Special Health Offer",
+      "background": {
+        "type": "gradient",
+        "gradientColors": ["#0284C7", "#1D4ED8"]
+      },
+      "data": {
+        "id": "off-first",
+        "title": "Get 20% OFF on Your First Doctor Consultation",
+        "titleHindi": "पहली डॉक्टर परामर्श पर 20% की छूट",
+        "code": "FIRSTCARE",
+        "discountText": "Flat 20% OFF",
+        "description": "Valid on all verified Hyderabad clinic appointments booked this month.",
+        "validTill": "30 Nov 2026",
+        "ctaText": "Claim & Book"
+      }
+    }
+  ]
+}
