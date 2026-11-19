@@ -110,7 +110,7 @@ export const HomeScreen: React.FC<TabScreenProps<'Home'>> = ({ navigation }) => 
             {/* Left: ⚡ 15 minutes + Location + Down arrow */}
             <View style={styles.locationContainer}>
               <View style={styles.deliveryTimeRow}>
-                <Zap size={19} color="#000000" fill="#000000" style={{ marginRight: 6 }} />
+                <Zap size={19} color={theme.colors.text} fill={theme.colors.text} style={{ marginRight: 6 }} />
                 <AppText variant="lg" weight="bold" color={theme.colors.text} style={styles.deliveryTimeText}>
                   15 minutes
                 </AppText>
@@ -143,7 +143,13 @@ export const HomeScreen: React.FC<TabScreenProps<'Home'>> = ({ navigation }) => 
                 accessibilityLabel="Profile"
                 onPress={() => navigation.navigate('MainTabs', { screen: 'Profile' })}
                 onLongPress={() => setDevModalVisible(true)}
-                style={[styles.profileCircleButton, { borderColor: theme.colors.text }]}
+                style={[
+                  styles.profileCircleButton,
+                  {
+                    borderColor: theme.colors.text,
+                    backgroundColor: theme.colors.surface,
+                  },
+                ]}
                 hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
               >
                 <User size={19} color={theme.colors.text} strokeWidth={2.2} />
@@ -151,64 +157,64 @@ export const HomeScreen: React.FC<TabScreenProps<'Home'>> = ({ navigation }) => 
             </View>
           </View>
 
-            {/* 2. SEARCH BAR (Navigates to DoctorSearch on tap) */}
-            <TouchableOpacity
-              activeOpacity={0.85}
-              accessibilityRole="button"
-              accessibilityLabel="Search doctors, tests, or services"
-              onPress={() => navigation.navigate('DoctorSearch')}
-              style={styles.searchContainer}
+          {/* 2. SEARCH BAR (Navigates to DoctorSearch on tap) */}
+          <TouchableOpacity
+            activeOpacity={0.85}
+            accessibilityRole="button"
+            accessibilityLabel="Search doctors, tests, or services"
+            onPress={() => navigation.navigate('DoctorSearch')}
+            style={styles.searchContainer}
+          >
+            <View
+              style={[
+                styles.searchBar,
+                {
+                  backgroundColor: theme.colors.surfaceVariant,
+                  borderColor: theme.colors.border,
+                },
+              ]}
             >
-              <View
-                style={[
-                  styles.searchBar,
-                  {
-                    backgroundColor: theme.colors.surfaceVariant,
-                    borderColor: theme.colors.border,
-                  },
-                ]}
-              >
-                <Search size={18} color={theme.colors.textMuted} style={{ marginRight: 8 }} />
-                <AppText variant="sm" color={theme.colors.textMuted} style={{ flex: 1 }}>
-                  Search doctors, tests, or services...
-                </AppText>
-              </View>
-        </TouchableOpacity>
+              <Search size={18} color={theme.colors.textMuted} style={{ marginRight: 8 }} />
+              <AppText variant="sm" color={theme.colors.textMuted} style={{ flex: 1 }}>
+                Search doctors, tests, or services...
+              </AppText>
+            </View>
+          </TouchableOpacity>
 
           {/* 4. DYNAMIC HOME SECTIONS RENDERED ACCORDING TO REMOTE CONFIG */}
-      {config?.sections.map((section) => (
-        <DynamicSectionRenderer
-          key={section.id}
-          section={section}
-          scrollY={scrollY}
-        />
-      ))}
+          {config?.sections.map((section) => (
+            <DynamicSectionRenderer
+              key={section.id}
+              section={section}
+              scrollY={scrollY}
+            />
+          ))}
 
-      {/* Safe empty state if config had 0 sections */}
-      {config?.sections.length === 0 && (
-        <EmptyState
-          title="No Sections Configured"
-          description="Pull down to refresh or check Developer Controls to reset active configuration."
-          actionTitle="Refresh Remote Config"
-          onAction={refresh}
-        />
-      )}
+          {/* Safe empty state if config had 0 sections */}
+          {config?.sections.length === 0 && (
+            <EmptyState
+              title="No Sections Configured"
+              description="Pull down to refresh or check Developer Controls to reset active configuration."
+              actionTitle="Refresh Remote Config"
+              onAction={refresh}
+            />
+          )}
 
-      <View style={{ height: 28 }} />
-    </Animated.ScrollView>
-  )
-}
+          <View style={{ height: 28 }} />
+        </Animated.ScrollView>
+      )
+      }
 
-{/* Developer Controls Modal */ }
-<DeveloperSettingsModal
-  visible={devModalVisible}
-  onClose={() => setDevModalVisible(false)}
-  onConfigSwitched={(targetId) => {
-    switchTheme(targetId);
-    setDevModalVisible(false);
-  }}
-  activeConfigId={activeConfigId}
-/>
+      {/* Developer Controls Modal */}
+      <DeveloperSettingsModal
+        visible={devModalVisible}
+        onClose={() => setDevModalVisible(false)}
+        onConfigSwitched={(targetId) => {
+          switchTheme(targetId);
+          setDevModalVisible(false);
+        }}
+        activeConfigId={activeConfigId}
+      />
     </View >
   );
 };

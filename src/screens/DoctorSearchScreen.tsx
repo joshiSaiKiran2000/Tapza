@@ -338,7 +338,7 @@ export const DoctorSearchScreen: React.FC<RootStackScreenProps<'DoctorSearch'>> 
   return (
     <SafeAreaView
       edges={['top', 'left', 'right']}
-      style={[styles.safeArea, { backgroundColor: '#FFFFFF' }]}
+      style={[styles.safeArea, { backgroundColor: theme.colors.background }]}
     >
       {/* 1. Header Bar: < Our Doctors [filter] */}
       <View style={styles.headerBar}>
@@ -349,79 +349,82 @@ export const DoctorSearchScreen: React.FC<RootStackScreenProps<'DoctorSearch'>> 
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           style={styles.headerIconButton}
         >
-          <ChevronLeft size={24} color="#0F172A" />
+          <ChevronLeft size={24} color={theme.colors.text} />
         </TouchableOpacity>
 
-        <AppText variant="lg" weight="bold" color="#0F172A" style={styles.headerTitle}>
-          Our Doctors
-        </AppText>
+          <AppText variant="lg" weight="bold" color={theme.colors.text} style={styles.headerTitle}>
+            Our Doctors
+          </AppText>
 
-        <TouchableOpacity
-          accessibilityRole="button"
-          accessibilityLabel="Filter doctors"
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-          style={styles.headerIconButton}
-        >
-          <SlidersHorizontal size={20} color="#0F172A" />
-        </TouchableOpacity>
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel="Filter doctors"
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            style={styles.headerIconButton}
+          >
+            <SlidersHorizontal size={20} color={theme.colors.text} />
+          </TouchableOpacity>
       </View>
 
       {/* 2. Search Bar */}
       <View style={styles.searchBarContainer}>
-        <View style={styles.searchBarBox}>
-          <Search size={18} color="#94A3B8" style={{ marginRight: 8 }} />
-          <TextInput
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            placeholder="Search doctors..."
-            placeholderTextColor="#94A3B8"
-            style={styles.searchInput}
-            autoFocus={false}
-          />
-          {searchQuery.length > 0 && (
-            <TouchableOpacity
-              onPress={() => setSearchQuery('')}
-              hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
-            >
-              <X size={16} color="#94A3B8" />
-            </TouchableOpacity>
-          )}
-        </View>
-      </View>
-
-      {/* 3. Horizontal Category Chips */}
-      <View style={styles.chipsWrapper}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.chipsContainer}
-        >
-          {categories.map((cat) => {
-            const isSelected = selectedCategory === cat;
-            return (
+          <View style={[styles.searchBarBox, { backgroundColor: theme.colors.surfaceVariant }]}>
+            <Search size={18} color={theme.colors.textMuted} style={{ marginRight: 8 }} />
+            <TextInput
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              placeholder="Search doctors..."
+              placeholderTextColor={theme.colors.textMuted}
+              style={[styles.searchInput, { color: theme.colors.text }]}
+              autoFocus={false}
+            />
+            {searchQuery.length > 0 && (
               <TouchableOpacity
-                key={cat}
-                accessibilityRole="button"
-                accessibilityLabel={`Filter by ${cat}`}
-                onPress={() => setSelectedCategory(cat)}
-                style={[
-                  styles.chipPill,
-                  isSelected
-                    ? { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary }
-                    : styles.chipInactive,
-                ]}
-                hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
+                onPress={() => setSearchQuery('')}
+                hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
               >
-                <AppText
-                  variant="xs"
-                  weight={isSelected ? 'bold' : 'medium'}
-                  color={isSelected ? '#FFFFFF' : '#475569'}
-                  style={styles.chipText}
-                >
-                  {cat}
-                </AppText>
+                <X size={16} color={theme.colors.textMuted} />
               </TouchableOpacity>
-            );
+            )}
+          </View>
+        </View>
+
+        {/* 3. Horizontal Category Chips */}
+        <View style={styles.chipsWrapper}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.chipsContainer}
+          >
+            {categories.map((cat) => {
+              const isSelected = selectedCategory === cat;
+              return (
+                <TouchableOpacity
+                  key={cat}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Filter by ${cat}`}
+                  onPress={() => setSelectedCategory(cat)}
+                  style={[
+                    styles.chipPill,
+                    isSelected
+                      ? { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary }
+                    : {
+              backgroundColor: theme.colors.surfaceVariant,
+            borderColor: theme.colors.border,
+                      },
+                ]}
+            hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
+              >
+            <AppText
+              variant="xs"
+              weight={isSelected ? 'bold' : 'medium'}
+              color={isSelected ? theme.colors.white : theme.colors.textSecondary}
+              style={styles.chipText}
+            >
+              {cat}
+            </AppText>
+          </TouchableOpacity>
+          );
           })}
         </ScrollView>
       </View>
@@ -452,195 +455,197 @@ export const DoctorSearchScreen: React.FC<RootStackScreenProps<'DoctorSearch'>> 
               accessibilityLabel={`Doctor ${item.name}, ${item.speciality}`}
               activeOpacity={0.7}
               onPress={() => handleDoctorPress(item)}
-              style={styles.doctorRow}
+              style={[styles.doctorRow, { borderBottomColor: theme.colors.border }]}
             >
               {/* Doctor Avatar Photo */}
-              <View style={styles.avatarContainer}>
-                <Image
-                  source={{ uri: item.imageUrl }}
-                  style={styles.avatarImage}
-                  resizeMode="cover"
-                />
-              </View>
-
-              {/* Middle Info Column */}
-              <View style={styles.doctorInfo}>
-                <AppText variant="md" weight="bold" color="#0F172A" style={styles.doctorName}>
-                  {item.name}
-                </AppText>
-                <AppText variant="xs" color="#64748B" style={styles.doctorSpeciality}>
-                  {item.speciality}
-                </AppText>
-                <AppText variant="xs" color="#94A3B8" style={styles.doctorDegrees}>
-                  {item.degrees} • {item.experienceYears} years exp
-                </AppText>
-
-                {/* Rating row */}
-                <View style={styles.ratingRow}>
-                  <Star size={14} color="#F59E0B" fill="#F59E0B" />
-                  <AppText variant="xs" weight="bold" color="#0F172A" style={{ marginLeft: 4 }}>
-                    {item.rating}
-                  </AppText>
-                  <AppText variant="xs" color="#94A3B8" style={{ marginLeft: 2 }}>
-                    ({item.reviewsCountFormatted})
-                  </AppText>
-                </View>
-              </View>
-
-              {/* Right Column: Bookmark + Available Pill */}
-              <View style={styles.doctorRightCol}>
-                <TouchableOpacity
-                  accessibilityRole="button"
-                  accessibilityLabel="Bookmark doctor"
-                  onPress={() => toggleBookmark(item.id)}
-                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                  style={styles.bookmarkButton}
+                <View
+                  style={[
+                    styles.avatarContainer,
+                    { backgroundColor: theme.colors.surfaceVariant },
+                  ]}
                 >
-                  <Bookmark
-                    size={20}
-                    color="#0F172A"
-                    fill={isBookmarked ? '#0F172A' : 'none'}
+                  <Image
+                    source={{ uri: item.imageUrl }}
+                    style={styles.avatarImage}
+                    resizeMode="cover"
                   />
-                </TouchableOpacity>
-
-                <View style={styles.availablePill}>
-                  <AppText variant="xs" weight="semibold" color="#047857" style={styles.availableText}>
-                    Available
-                  </AppText>
                 </View>
-              </View>
-            </TouchableOpacity>
-          );
+
+                {/* Middle Info Column */}
+                <View style={styles.doctorInfo}>
+                    <AppText variant="md" weight="bold" color={theme.colors.text} style={styles.doctorName}>
+                      {item.name}
+                    </AppText>
+                      <AppText variant="xs" color={theme.colors.textSecondary} style={styles.doctorSpeciality}>
+                        {item.speciality}
+                      </AppText>
+                        <AppText variant="xs" color={theme.colors.textMuted} style={styles.doctorDegrees}>
+                          {item.degrees} • {item.experienceYears} years exp
+                        </AppText>
+
+                        {/* Rating row */}
+                        <View style={styles.ratingRow}>
+                          <Star size={14} color="#F59E0B" fill="#F59E0B" />
+                            <AppText variant="xs" weight="bold" color={theme.colors.text} style={{ marginLeft: 4 }}>
+                              {item.rating}
+                            </AppText>
+                              <AppText variant="xs" color={theme.colors.textMuted} style={{ marginLeft: 2 }}>
+                                ({item.reviewsCountFormatted})
+                              </AppText>
+                            </View>
+                        </View>
+
+                        {/* Right Column: Bookmark + Available Pill */}
+                        <View style={styles.doctorRightCol}>
+                          <TouchableOpacity
+                            accessibilityRole="button"
+                            accessibilityLabel="Bookmark doctor"
+                            onPress={() => toggleBookmark(item.id)}
+                            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                            style={styles.bookmarkButton}
+                          >
+                            <Bookmark
+                              size={20}
+                              color={theme.colors.text}
+                              fill={isBookmarked ? theme.colors.text : 'none'}
+                            />
+                          </TouchableOpacity>
+
+                              <View
+                                style={[
+                                  styles.availablePill,
+                                  { backgroundColor: theme.colors.successLight },
+                                ]}
+                              >
+                                <AppText variant="xs" weight="semibold" color={theme.colors.success} style={styles.availableText}>
+                                  Available
+                                </AppText>
+                              </View>
+                          </View>
+                        </TouchableOpacity>
+                        );
         }}
       />
-    </SafeAreaView>
-  );
+                      </SafeAreaView>
+                      );
 };
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
+                      const styles = StyleSheet.create({
+                        safeArea: {
+                        flex: 1,
   },
-  headerBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+                      headerBar: {
+                        flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      paddingHorizontal: 16,
+                      paddingVertical: 12,
   },
-  headerIconButton: {
-    width: 36,
-    height: 36,
-    alignItems: 'center',
-    justifyContent: 'center',
+                      headerIconButton: {
+                        width: 36,
+                      height: 36,
+                      alignItems: 'center',
+                      justifyContent: 'center',
   },
-  headerTitle: {
-    fontSize: 18,
-    lineHeight: 22,
+                      headerTitle: {
+                        fontSize: 18,
+                      lineHeight: 22,
   },
-  searchBarContainer: {
-    paddingHorizontal: 16,
-    paddingBottom: 10,
+                      searchBarContainer: {
+                        paddingHorizontal: 16,
+                      paddingBottom: 10,
   },
-  searchBarBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F1F5F9',
-    height: 46,
-    borderRadius: 23,
-    paddingHorizontal: 14,
+                      searchBarBox: {
+                        flexDirection: 'row',
+                      alignItems: 'center',
+                      height: 46,
+                      borderRadius: 23,
+                      paddingHorizontal: 14,
   },
-  searchInput: {
-    flex: 1,
-    fontSize: 14,
-    color: '#0F172A',
-    height: '100%',
+                      searchInput: {
+                        flex: 1,
+                      fontSize: 14,
+                      height: '100%',
   },
-  chipsWrapper: {
-    marginBottom: 8,
+                      chipsWrapper: {
+                        marginBottom: 8,
   },
-  chipsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    gap: 8,
+                      chipsContainer: {
+                        flexDirection: 'row',
+                      alignItems: 'center',
+                      paddingHorizontal: 16,
+                      gap: 8,
   },
-  chipPill: {
-    paddingHorizontal: 16,
-    paddingVertical: 7,
-    borderRadius: 18,
-    borderWidth: 1,
+                      chipPill: {
+                        paddingHorizontal: 16,
+                      paddingVertical: 7,
+                      borderRadius: 18,
+                      borderWidth: 1,
   },
-  chipInactive: {
-    backgroundColor: '#FFFFFF',
-    borderColor: '#E2E8F0',
+                      chipInactive: { },
+                      chipText: {
+                        fontSize: 12.5,
+                      lineHeight: 16,
   },
-  chipText: {
-    fontSize: 12.5,
-    lineHeight: 16,
+                      listContent: {
+                        paddingBottom: 24,
   },
-  listContent: {
-    paddingBottom: 24,
+                      doctorRow: {
+                        flexDirection: 'row',
+                      alignItems: 'center',
+                      paddingHorizontal: 16,
+                      paddingVertical: 14,
+                      borderBottomWidth: StyleSheet.hairlineWidth,
   },
-  doctorRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#F1F5F9',
+                      avatarContainer: {
+                        width: 70,
+                      height: 70,
+                      borderRadius: 35,
+                      overflow: 'hidden',
   },
-  avatarContainer: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    overflow: 'hidden',
-    backgroundColor: '#E0F2FE',
+                      avatarImage: {
+                        width: '100%',
+                      height: '100%',
   },
-  avatarImage: {
-    width: '100%',
-    height: '100%',
+                      doctorInfo: {
+                        flex: 1,
+                      paddingLeft: 14,
+                      justifyContent: 'center',
   },
-  doctorInfo: {
-    flex: 1,
-    paddingLeft: 14,
-    justifyContent: 'center',
+                      doctorName: {
+                        fontSize: 16,
+                      lineHeight: 20,
   },
-  doctorName: {
-    fontSize: 16,
-    lineHeight: 20,
+                      doctorSpeciality: {
+                        fontSize: 13,
+                      lineHeight: 17,
+                      marginTop: 2,
   },
-  doctorSpeciality: {
-    fontSize: 13,
-    lineHeight: 17,
-    marginTop: 2,
+                      doctorDegrees: {
+                        fontSize: 11.5,
+                      lineHeight: 15,
+                      marginTop: 2,
   },
-  doctorDegrees: {
-    fontSize: 11.5,
-    lineHeight: 15,
-    marginTop: 2,
+                      ratingRow: {
+                        flexDirection: 'row',
+                      alignItems: 'center',
+                      marginTop: 4,
   },
-  ratingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 4,
+                      doctorRightCol: {
+                        alignItems: 'flex-end',
+                      justifyContent: 'space-between',
+                      height: 64,
   },
-  doctorRightCol: {
-    alignItems: 'flex-end',
-    justifyContent: 'space-between',
-    height: 64,
+                      bookmarkButton: {
+                        padding: 2,
   },
-  bookmarkButton: {
-    padding: 2,
+                      availablePill: {
+                      paddingHorizontal: 10,
+                      paddingVertical: 3.5,
+                      borderRadius: 12,
   },
-  availablePill: {
-    backgroundColor: '#D1FAE5',
-    paddingHorizontal: 10,
-    paddingVertical: 3.5,
-    borderRadius: 12,
-  },
-  availableText: {
-    fontSize: 11,
-    lineHeight: 13,
+                      availableText: {
+                        fontSize: 11,
+                      lineHeight: 13,
   },
 });

@@ -100,81 +100,89 @@ export const DoctorDetailsSkeleton: React.FC = () => {
   return (
     <View style={[styles.skeletonContainer, { padding: theme.spacing.md }]}>
       {/* Doctor Profile Card */}
-      <View style={styles.profileHeader}>
-        <Skeleton width={60} height={60} borderRadius={16} style={{ marginRight: 12 }} />
-        <View style={{ flex: 1 }}>
-          <Skeleton height={22} width="70%" borderRadius={6} style={{ marginBottom: 8 }} />
-          <Skeleton height={16} width="50%" borderRadius={4} style={{ marginBottom: 6 }} />
-          <Skeleton height={14} width="35%" borderRadius={4} />
+        <View
+          style={[
+            styles.profileHeader,
+            {
+              backgroundColor: theme.colors.card,
+              borderColor: theme.colors.border,
+            },
+          ]}
+        >
+          <Skeleton width={60} height={60} borderRadius={16} style={{ marginRight: 12 }} />
+          <View style={{ flex: 1 }}>
+            <Skeleton height={22} width="70%" borderRadius={6} style={{ marginBottom: 8 }} />
+            <Skeleton height={16} width="50%" borderRadius={4} style={{ marginBottom: 6 }} />
+            <Skeleton height={14} width="35%" borderRadius={4} />
+          </View>
         </View>
+
+        {/* Date Selector Skeleton */}
+        <Skeleton height={20} width={180} borderRadius={4} style={{ marginTop: 24, marginBottom: 10 }} />
+        <View style={styles.chipsRow}>
+          <Skeleton width={64} height={64} borderRadius={14} style={{ marginRight: 8 }} />
+          <Skeleton width={64} height={64} borderRadius={14} style={{ marginRight: 8 }} />
+          <Skeleton width={64} height={64} borderRadius={14} style={{ marginRight: 8 }} />
+          <Skeleton width={64} height={64} borderRadius={14} />
+        </View>
+
+        {/* Clinic Skeleton */}
+        <Skeleton height={100} borderRadius={16} style={{ marginTop: 20 }} />
+
+        {/* Button Skeleton */}
+        <Skeleton height={50} borderRadius={14} style={{ marginTop: 24 }} />
       </View>
-
-      {/* Date Selector Skeleton */}
-      <Skeleton height={20} width={180} borderRadius={4} style={{ marginTop: 24, marginBottom: 10 }} />
-      <View style={styles.chipsRow}>
-        <Skeleton width={64} height={64} borderRadius={14} style={{ marginRight: 8 }} />
-        <Skeleton width={64} height={64} borderRadius={14} style={{ marginRight: 8 }} />
-        <Skeleton width={64} height={64} borderRadius={14} style={{ marginRight: 8 }} />
-        <Skeleton width={64} height={64} borderRadius={14} />
-      </View>
-
-      {/* Clinic Skeleton */}
-      <Skeleton height={100} borderRadius={16} style={{ marginTop: 20 }} />
-
-      {/* Button Skeleton */}
-      <Skeleton height={50} borderRadius={14} style={{ marginTop: 24 }} />
-    </View>
-  );
+      );
 };
 
 export const PrescriptionListSkeleton: React.FC = () => {
   const theme = useTheme();
 
-  return (
-    <View style={[styles.skeletonContainer, { padding: theme.spacing.md }]}>
-      {/* Dose Progress Tracker Skeleton */}
-      <Skeleton height={90} borderRadius={16} style={{ marginBottom: 18 }} />
+      return (
+      <View style={[styles.skeletonContainer, { padding: theme.spacing.md }]}>
+        {/* Dose Progress Tracker Skeleton */}
+        <Skeleton height={90} borderRadius={16} style={{ marginBottom: 18 }} />
 
-      <Skeleton height={22} width={160} borderRadius={6} style={{ marginBottom: 12 }} />
+        <Skeleton height={22} width={160} borderRadius={6} style={{ marginBottom: 12 }} />
 
-      {/* Prescription Cards */}
-      <Skeleton height={130} borderRadius={16} style={{ marginBottom: 14 }} />
-      <Skeleton height={130} borderRadius={16} style={{ marginBottom: 14 }} />
-      <Skeleton height={130} borderRadius={16} />
-    </View>
-  );
+        {/* Prescription Cards */}
+        <Skeleton height={130} borderRadius={16} style={{ marginBottom: 14 }} />
+        <Skeleton height={130} borderRadius={16} style={{ marginBottom: 14 }} />
+        <Skeleton height={130} borderRadius={16} />
+      </View>
+      );
 };
 
 export const BookingListSkeleton: React.FC = () => {
   const theme = useTheme();
 
-  return (
-    <View style={[styles.skeletonContainer, { padding: theme.spacing.md }]}>
-      <Skeleton height={140} borderRadius={16} style={{ marginBottom: 14 }} />
-      <Skeleton height={140} borderRadius={16} style={{ marginBottom: 14 }} />
-      <Skeleton height={140} borderRadius={16} />
-    </View>
-  );
+      return (
+      <View style={[styles.skeletonContainer, { padding: theme.spacing.md }]}>
+        <Skeleton height={140} borderRadius={16} style={{ marginBottom: 14 }} />
+        <Skeleton height={140} borderRadius={16} style={{ marginBottom: 14 }} />
+        <Skeleton height={140} borderRadius={16} />
+      </View>
+      );
 };
 
-const styles = StyleSheet.create({
-  skeletonContainer: {
-    flex: 1,
+      const styles = StyleSheet.create({
+        skeletonContainer: {
+        flex: 1,
   },
-  gridRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+      gridRow: {
+        flexDirection: 'row',
+      justifyContent: 'space-between',
   },
-  chipsRow: {
-    flexDirection: 'row',
+      chipsRow: {
+        flexDirection: 'row',
   },
-  profileHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    borderRadius: 16,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
+      profileHeader: {
+        flexDirection: 'row',
+      alignItems: 'center',
+      padding: 16,
+      borderRadius: 16,
+      backgroundColor: '#FFFFFF',
+      borderWidth: 1,
+      borderColor: '#E2E8F0',
   },
 });
