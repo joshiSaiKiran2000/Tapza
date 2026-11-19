@@ -7,3 +7,4 @@ export * from './DoctorSearchScreen';
 export * from './BookingDetailsScreen';
 export * from './PrescriptionDetailsScreen';
 export * from './BookingSuccessScreen';
+export * from './AdminPanelScreen';

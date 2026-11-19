@@ -7,6 +7,7 @@ import {
   BookingDetailsScreen,
   PrescriptionDetailsScreen,
   BookingSuccessScreen,
+  AdminPanelScreen,
 } from '../screens';
 import type { RootStackParamList } from '../types/navigation';
 import { useTheme } from '../theme';
@@ -46,6 +47,11 @@ export const RootNavigator: React.FC = () => {
       <Stack.Screen
         name="PrescriptionDetails"
         component={PrescriptionDetailsScreen}
+        options={{ animation: 'slide_from_right' }}
+      />
+      <Stack.Screen
+        name="AdminPanel"
+        component={AdminPanelScreen}
         options={{ animation: 'slide_from_right' }}
       />
       <Stack.Screen

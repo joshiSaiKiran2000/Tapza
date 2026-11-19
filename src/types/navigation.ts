@@ -21,6 +21,7 @@ export type RootStackParamList = {
   DoctorSearch: { query?: string; initialCategory?: string } | undefined;
   BookingDetails: { bookingId: string };
   PrescriptionDetails: { prescriptionId: string };
+  AdminPanel: undefined;
   BookingSuccess: {
     bookingId: string;
     doctorId: string;

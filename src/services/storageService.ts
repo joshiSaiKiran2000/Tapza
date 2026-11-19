@@ -6,6 +6,7 @@ export const STORAGE_KEYS = {
   DEV_SETTINGS: '@tapza/dev_settings',
   MEDICINE_DOSES: '@tapza/medicine_doses',
   BOOKINGS: '@tapza/bookings',
+  THEME_CUSTOMIZATIONS: '@tapza/theme_customizations',
 } as const;
 
 export const storageService = {
