@@ -73,11 +73,18 @@ export type QuickActionsData = z.infer<typeof quickActionsDataSchema>;
  */
 export const serviceGridItemSchema = z.object({
   id: z.string(),
-  title: z.string(),
-  subtitle: z.string(),
-  icon: z.string(),
+  title: z.string().optional(),
+  name: z.string().optional(),
+  subtitle: z.string().optional(),
+  icon: z.string().optional(),
+  image: z.string().optional(),
+  imageUrl: z.string().optional(),
+  price: z.union([z.number(), z.string()]).optional(),
+  priceRupees: z.union([z.number(), z.string()]).optional(),
+  originalPrice: z.union([z.number(), z.string()]).optional(),
+  badge: z.string().optional(),
   tag: z.string().optional(),
-  route: z.string(),
+  route: z.string().optional(),
   discount: z.string().optional(),
 });
 export const serviceGridDataSchema = z.object({

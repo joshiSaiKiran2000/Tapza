@@ -241,43 +241,63 @@
         "color": "#F8FAFC"
       },
       "data": {
-        "columns": 2,
+        "columns": 3,
         "services": [
           {
             "id": "srv-1",
+            "name": "Comprehensive Heart Check",
             "title": "Comprehensive Heart Check",
             "subtitle": "ECG, 2D Echo, Lipid & TMT",
             "icon": "HeartPulse",
+            "image": "https://images.unsplash.com/photo-1628348068343-c6a848d2b6dd?w=500&q=80",
+            "price": 1499,
+            "originalPrice": 2499,
+            "badge": "Most Popular",
             "tag": "Most Popular",
             "route": "DoctorDetails",
-            "discount": "₹1,499 (Save 40%)"
+            "discount": "40% OFF"
           },
           {
             "id": "srv-2",
+            "name": "Diabetes Care Pack",
             "title": "Diabetes Care Pack",
             "subtitle": "HbA1c, Fasting Sugar & Renal",
             "icon": "Activity",
+            "image": "https://images.unsplash.com/photo-1584362917165-526a968579e8?w=500&q=80",
+            "price": 799,
+            "originalPrice": 1199,
+            "badge": "Essential",
             "tag": "Essential",
             "route": "DoctorDetails",
-            "discount": "₹799 (Save 35%)"
+            "discount": "35% OFF"
           },
           {
             "id": "srv-3",
+            "name": "Full Body Wellness",
             "title": "Full Body Wellness",
             "subtitle": "68 Key Health Parameters",
             "icon": "ShieldCheck",
+            "image": "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=500&q=80",
+            "price": 1999,
+            "originalPrice": 3999,
+            "badge": "Family Care",
             "tag": "Family Care",
             "route": "DoctorDetails",
-            "discount": "₹1,999 (Save 50%)"
+            "discount": "50% OFF"
           },
           {
             "id": "srv-4",
+            "name": "Child Immunization",
             "title": "Child Immunization",
             "subtitle": "Vaccine schedule & growth audit",
             "icon": "Baby",
+            "image": "https://images.unsplash.com/photo-1536640712-4d4c36ff0e4e?w=500&q=80",
+            "price": 599,
+            "originalPrice": 999,
+            "badge": "Pediatric",
             "tag": "Pediatric",
             "route": "DoctorDetails",
-            "discount": "₹599 Visit"
+            "discount": "40% OFF"
           }
         ]
       }

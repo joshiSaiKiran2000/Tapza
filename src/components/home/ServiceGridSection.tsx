@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
@@ -8,13 +8,15 @@ import {
   ShieldCheck,
   Baby,
   Sparkles,
+  FlaskConical,
+  Stethoscope,
+  Plus,
   LucideIcon,
-  ChevronRight,
 } from 'lucide-react-native';
-import { ServiceGridData, BackgroundConfig } from '../../config/types';
+import { ServiceGridData, BackgroundConfig, ServiceGridItem } from '../../config/types';
 import { RootStackParamList } from '../../types/navigation';
 import { useTheme } from '../../theme';
-import { AppText, AppBadge } from '../common';
+import { AppText } from '../common';
 import { SectionBackground } from './SectionBackground';
 
 const iconMap: Record<string, LucideIcon> = {
@@ -23,6 +25,8 @@ const iconMap: Record<string, LucideIcon> = {
   ShieldCheck,
   Baby,
   Sparkles,
+  FlaskConical,
+  Stethoscope,
 };
 
 interface ServiceGridSectionProps {
@@ -42,132 +46,287 @@ export const ServiceGridSection: React.FC<ServiceGridSectionProps> = ({
   const theme = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-  const handleServicePress = () => {
-    navigation.navigate('DoctorDetails', { doctorId: 'doc-1' });
+  const handleCardPress = (service: ServiceGridItem) => {
+    if (service.route === 'DoctorDetails') {
+      navigation.navigate('DoctorDetails', { doctorId: 'doc-1' });
+    } else {
+      const queryName = service.name || service.title || 'Health Checkup';
+      navigation.navigate('DoctorSearch', { query: queryName });
+    }
   };
 
   return (
     <SectionBackground background={background} style={styles.sectionContainer}>
-      <View style={{ paddingHorizontal: theme.spacing.md, paddingTop: theme.spacing.sm }}>
-        {title ? (
-          <AppText variant="lg" weight="bold">
-            {title}
-          </AppText>
-        ) : null}
-        {subtitle ? (
-          <AppText variant="xs" color={theme.colors.textSecondary} style={{ marginTop: 2 }}>
-            {subtitle}
-          </AppText>
-        ) : null}
-      </View>
-
-      <View style={[styles.grid, { padding: theme.spacing.md }]}>
-        {data.services.map((srv) => {
-          const IconComponent = iconMap[srv.icon] || Sparkles;
-
-          return (
-            <TouchableOpacity
-              key={srv.id}
-              accessibilityRole="button"
-              accessibilityLabel={`${srv.title}: ${srv.subtitle}`}
-              activeOpacity={0.7}
-              onPress={handleServicePress}
-              style={[
-                styles.card,
-                {
-                  backgroundColor: theme.colors.card,
-                  borderColor: theme.colors.border,
-                  borderRadius: theme.borderRadius.lg,
-                  padding: theme.spacing.md,
-                },
-              ]}
-              hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
-            >
-              <View style={styles.topRow}>
-                <View
-                  style={[
-                    styles.iconBox,
-                    {
-                      backgroundColor: theme.colors.primaryLight,
-                    },
-                  ]}
-                >
-                  <IconComponent size={20} color={theme.colors.primary} />
-                </View>
-
-                {srv.tag ? (
-                  <AppBadge label={srv.tag} variant="secondary" />
+      <View style={styles.outerWrapper}>
+            {/* Section Header */}
+            {(title || subtitle) && (
+              <View style={styles.headerRow}>
+                {title ? (
+                  <AppText variant="lg" weight="bold" color={theme.colors.text}>
+                    {title}
+                  </AppText>
+                ) : null}
+                {subtitle ? (
+                  <AppText variant="xs" color={theme.colors.textSecondary} style={{ marginTop: 2 }}>
+                    {subtitle}
+                  </AppText>
                 ) : null}
               </View>
+            )}
 
-              <AppText
-                variant="sm"
-                weight="bold"
-                numberOfLines={2}
-                style={[styles.serviceTitle, { marginTop: theme.spacing.xs }]}
-              >
-                {srv.title}
-              </AppText>
-
-              <AppText
-                variant="xs"
-                color={theme.colors.textMuted}
-                numberOfLines={2}
-                style={{ marginTop: 2 }}
-              >
-                {srv.subtitle}
-              </AppText>
-
-              {srv.discount ? (
-                <View style={[styles.discountRow, { marginTop: theme.spacing.xs }]}>
-                  <AppText variant="xs" weight="bold" color={theme.colors.primary}>
-                    {srv.discount}
-                  </AppText>
-                  <ChevronRight size={14} color={theme.colors.primary} />
-                </View>
-              ) : null}
-            </TouchableOpacity>
-          );
-        })}
-      </View>
+          {/* 3-Column Service Grid Cards */}
+          <View style={styles.grid}>
+            {data.services.map((srv) => (
+              <ServiceCardItem
+                key={srv.id}
+                service={srv}
+                onPress={() => handleCardPress(srv)}
+              />
+            ))}
+          </View>
+        </View>
     </SectionBackground>
   );
 };
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginVertical: 4,
+interface ServiceCardItemProps {
+  service: ServiceGridItem;
+  onPress: () => void;
+}
+
+const ServiceCardItem: React.FC<ServiceCardItemProps> = ({
+  service,
+  onPress,
+}) => {
+  const theme = useTheme();
+  const [imageError, setImageError] = useState(false);
+
+  const name = service.name || service.title || 'Health Package';
+  const badgeText = service.badge || service.tag;
+  const imageUrl = service.image || service.imageUrl;
+
+  // Format Price in Rupees
+  const rawPrice = service.price ?? service.priceRupees;
+  let priceFormatted: string;
+  if (typeof rawPrice === 'number') {
+    priceFormatted = `₹${rawPrice.toLocaleString('en-IN')}`;
+  } else if (typeof rawPrice === 'string') {
+    priceFormatted = rawPrice.startsWith('₹') ? rawPrice : `₹${rawPrice}`;
+  } else if (service.discount && service.discount.includes('₹')) {
+    priceFormatted = service.discount.split(' ')[0];
+  } else {
+    priceFormatted = '₹499';
+  }
+
+  // Format Original Price
+  let originalPriceFormatted: string | null = null;
+  if (service.originalPrice) {
+    if (typeof service.originalPrice === 'number') {
+      originalPriceFormatted = `₹${service.originalPrice.toLocaleString('en-IN')}`;
+    } else if (typeof service.originalPrice === 'string') {
+      originalPriceFormatted = service.originalPrice.startsWith('₹')
+        ? service.originalPrice
+        : `₹${service.originalPrice}`;
+    }
+  }
+
+  const IconComponent = (service.icon && iconMap[service.icon]) || Sparkles;
+
+  // Badge color mapping
+  const getBadgeBg = (text: string) => {
+    const lower = text.toLowerCase();
+    if (lower.includes('diwali') || lower.includes('special')) return '#D97706';
+    if (lower.includes('popular') || lower.includes('best')) return '#0D7A73';
+    if (lower.includes('essential')) return '#2563EB';
+    if (lower.includes('off') || lower.includes('save')) return '#15803D';
+    return theme.colors.primary;
+  };
+
+  return (
+    <TouchableOpacity
+      accessibilityRole="button"
+      accessibilityLabel={`${name}: ${priceFormatted}`}
+      activeOpacity={0.82}
+      onPress={onPress}
+      style={[
+        styles.card3Col,
+        {
+          backgroundColor: theme.colors.card,
+          borderColor: theme.colors.border,
+        },
+      ]}
+      hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
+    >
+      {/* Top Image or Fallback Visual */}
+        <View style={styles.imageContainer3Col}>
+          {imageUrl && !imageError ? (
+            <Image
+              source={{ uri: imageUrl }}
+              style={styles.cardImage}
+              resizeMode="cover"
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <View style={[styles.fallbackBox, { backgroundColor: theme.colors.primaryLight }]}>
+              <IconComponent size={24} color={theme.colors.primary} />
+            </View>
+          )}
+
+          {/* Optional Floating Badge on Image */}
+          {badgeText ? (
+            <View
+              style={[
+                styles.floatingBadge3Col,
+                { backgroundColor: getBadgeBg(badgeText) },
+              ]}
+            >
+              <AppText
+                variant="xs"
+                weight="bold"
+                color="#FFFFFF"
+                numberOfLines={1}
+                style={{ fontSize: 9, letterSpacing: 0.2 }}
+              >
+                {badgeText}
+              </AppText>
+            </View>
+          ) : null}
+        </View>
+
+        {/* Card Details */}
+          <View style={styles.cardContent3Col}>
+            {/* Name / Title */}
+            <AppText
+              variant="xs"
+              weight="bold"
+              numberOfLines={2}
+              color={theme.colors.text}
+              style={styles.serviceName3Col}
+            >
+              {name}
+            </AppText>
+
+            {/* Price Row */}
+              <View style={styles.priceRow}>
+                <View style={styles.priceContainer}>
+                  <AppText
+                    variant="xs"
+                    weight="bold"
+                    color="#0D7A73"
+                    style={{ fontSize: 12 }}
+                  >
+                    {priceFormatted}
+                  </AppText>
+
+                  {originalPriceFormatted ? (
+                    <AppText
+                      variant="xs"
+                      color={theme.colors.textMuted}
+                      style={styles.originalPrice}
+                    >
+                      {originalPriceFormatted}
+                    </AppText>
+                  ) : null}
+                </View>
+
+                {/* Plus Add / Book Button */}
+                <View style={[styles.plusBtn3Col, { backgroundColor: theme.colors.primaryLight }]}>
+                  <Plus size={12} color={theme.colors.primary} strokeWidth={2.5} />
+                </View>
+              </View>
+            </View>
+          </TouchableOpacity>
+          );
+};
+
+          const styles = StyleSheet.create({
+            sectionContainer: {
+            marginVertical: 6,
   },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    rowGap: 12,
+          outerWrapper: {
+            paddingHorizontal: 16,
+          width: '100%',
   },
-  card: {
-    width: '48%',
-    borderWidth: 1,
-    minHeight: 140,
-    justifyContent: 'space-between',
+          headerRow: {
+          marginBottom: 12,
   },
-  topRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+          grid: {
+            flexDirection: 'row',
+          flexWrap: 'wrap',
+          justifyContent: 'space-between',
+          rowGap: 10,
   },
-  iconBox: {
-    width: 38,
-    height: 38,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
+          card3Col: {
+            width: '31.3%',
+          borderRadius: 14,
+          borderWidth: 1,
+          overflow: 'hidden',
+          shadowColor: '#000',
+          shadowOffset: {width: 0, height: 1 },
+          shadowOpacity: 0.06,
+          shadowRadius: 3,
+          elevation: 1,
   },
-  serviceTitle: {
-    lineHeight: 18,
+            imageContainer3Col: {
+            width: '100%',
+          height: 78,
+          overflow: 'hidden',
+          position: 'relative',
   },
-  discountRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+          cardImage: {
+            width: '100%',
+          height: '100%',
+  },
+          fallbackBox: {
+            width: '100%',
+          height: '100%',
+          alignItems: 'center',
+          justifyContent: 'center',
+  },
+            floatingBadge3Col: {
+            position: 'absolute',
+          top: 5,
+          left: 5,
+          borderRadius: 5,
+          paddingHorizontal: 5,
+          paddingVertical: 2,
+          shadowColor: '#000',
+          shadowOffset: {width: 0, height: 1 },
+          shadowOpacity: 0.15,
+          shadowRadius: 2,
+          elevation: 2,
+  },
+          cardContent3Col: {
+            padding: 7,
+          justifyContent: 'space-between',
+          minHeight: 64,
+  },
+          serviceName3Col: {
+            fontSize: 11,
+          lineHeight: 14,
+          minHeight: 28,
+  },
+          priceRow: {
+            flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginTop: 4,
+  },
+          priceContainer: {
+            flexDirection: 'row',
+          alignItems: 'baseline',
+          gap: 3,
+          flexWrap: 'wrap',
+  },
+          originalPrice: {
+            textDecorationLine: 'line-through',
+          fontSize: 9,
+  },
+          plusBtn3Col: {
+            width: 22,
+          height: 22,
+          borderRadius: 11,
+          alignItems: 'center',
+          justifyContent: 'center',
   },
 });
